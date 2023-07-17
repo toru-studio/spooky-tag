@@ -26,4 +26,19 @@ public class Tagger : MonoBehaviour
         moveDirection = orientation.forward * inputV + orientation.right * inputH;
         _rigidbody.AddForce(moveDirection.normalized * moveSpeed, ForceMode.Force);
     }
+
+    void beginClimb()
+    {
+        
+    }
+
+    void beginVault()
+    {
+        
+    }
+
+    void beginSlide()
+    {
+        
+    }
 }
