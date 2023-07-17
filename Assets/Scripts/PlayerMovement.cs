@@ -6,19 +6,24 @@ public class PlayerMovement : Tagger
     // Horizontal and Vertical inputs
     float inputH;
     float inputV;
+    private CameraController camera;
 
 
     // Start is called before the first frame update
     void Start()
     {
         base.Start();
+        camera = gameObject.GetComponent<CameraController>();
     }
 
     // Update is called once per frame
     void Update()
     {
+        base.Update();
         Inputs();
     }
+
+    
 
     private void FixedUpdate()
     {
@@ -29,5 +34,17 @@ public class PlayerMovement : Tagger
     {
         inputH = Input.GetAxisRaw("Horizontal");
         inputV = Input.GetAxisRaw("Vertical");
+    }
+    
+    // Disables the camera
+    protected override void DisableComponents()
+    {
+        camera.enabled = false;
+    }
+
+    // Enables the camera
+    protected override void EnableComponents()
+    {
+        camera.enabled = true;
     }
 }

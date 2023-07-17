@@ -21,11 +21,16 @@ public class ClimbTrigger : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
+        // Get taggers interacting with the trigger
         Tagger[] taggers = other.gameObject.GetComponents<Tagger>();
+        // Get the taggers position relative to the trigger
         Vector3 dir = other.transform.position - transform.position;
 
+        // Set y to the top of the parent object + taggerHeight
         float yCoord = parentObject.transform.position.y +
                        parentObject.transform.localScale.y / 2f + 1;
+        // Set the x & z position of the tagger to the edge of the parent game object
+        // relative to their current position.
         float xCoord = parentObject.transform.position.x +
                       (parentObject.transform.localScale.x * dir.normalized.x) / 2f;
         float zCoord = parentObject.transform.position.z +
