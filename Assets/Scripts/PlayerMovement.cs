@@ -2,7 +2,6 @@ using UnityEngine;
 
 public class PlayerMovement : Tagger
 {
-    public bool canMove = true;
 
     // Horizontal and Vertical inputs
     float inputH;
