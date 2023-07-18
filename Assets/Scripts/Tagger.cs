@@ -4,33 +4,29 @@ public abstract class Tagger : MonoBehaviour
 {
     private Vector3 moveDirection;
 
-    [Header("Speeds")]
-    private float moveSpeed;
+    [Header("States")] public MoveState currentState;
+    protected bool isSprinting;
+    protected bool isOnGround;
+    protected bool isCrouching;
+
+    [Header("Speeds")] private float moveSpeed;
     public float walkSpeed;
     public float sprintSpeed;
     public float crouchSpeed;
     public float airMultiplier;
 
-    [Header("States")]
-    public MoveState currentState;
-    protected bool isSprinting;
-    protected bool isOnGround;
-    protected bool isCrouching;
+    [Header("Slopes")] public float maxAngle;
+    private RaycastHit slopeHit;
 
-    [Header("Heights")] 
-    public float playerHeight;
+    [Header("Heights")] public float playerHeight;
     protected float playerHeightStartScale;
     public float jumpHeight;
     public float crouchHeightScale;
-    
-    
-    
-    [Header("Drag Control")]
-    public float gDrag;
-    public float aDrag;
-    [Header("Misc")]
 
-    public LayerMask ground;
+    [Header("Drag Control")] public float gDrag;
+    public float aDrag;
+
+    [Header("Misc")] public LayerMask ground;
     public Transform orientation;
     public bool canMove = true;
 
@@ -46,9 +42,9 @@ public abstract class Tagger : MonoBehaviour
         inSprint,
         inWalk,
         inCrouch,
+        onSlope,
         inSlide
     }
-
 
 
     // Start is called before the first frame update
@@ -78,10 +74,14 @@ public abstract class Tagger : MonoBehaviour
         {
             currentState = MoveState.inWalk;
             moveSpeed = walkSpeed;
-        }else if (isOnGround && isCrouching)
+        }
+        else if (isOnGround && isCrouching)
         {
             currentState = MoveState.inCrouch;
             moveSpeed = crouchSpeed;
+        }else if (OnSlope())
+        {
+            currentState = MoveState.onSlope;
         }
         else
         {
@@ -94,15 +94,41 @@ public abstract class Tagger : MonoBehaviour
     {
         if (!canMove) return;
         moveDirection = orientation.forward * inputV + orientation.right * inputH;
-        var speed = isSprinting ? sprintSpeed : moveSpeed;
-        var speedAir = isOnGround ? speed : speed * airMultiplier;
-        rigidbody.AddForce(moveDirection.normalized * speedAir, ForceMode.Force);
+
+        if (OnSlope())
+        {
+            rigidbody.AddForce(getSlopeMove() * (moveSpeed * 20f), ForceMode.Force);
+        }
+        else if (isOnGround)
+        {
+            rigidbody.AddForce(moveDirection.normalized * (moveSpeed * 10f), ForceMode.Force);
+        }
+        else
+        {
+            rigidbody.AddForce(moveDirection.normalized * (moveSpeed * 10f * airMultiplier), ForceMode.Force);
+        }
     }
 
     protected void Jump()
     {
         moveDirection += Vector3.up * (jumpHeight / 100f);
         rigidbody.AddForce(moveDirection, ForceMode.Impulse);
+    }
+
+    private bool OnSlope()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.2f))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            return angle < maxAngle && angle != 0;
+        }
+
+        return false;
+    }
+
+    private Vector3 getSlopeMove()
+    {
+        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
 
     protected void speedLimiter()
@@ -137,6 +163,7 @@ public abstract class Tagger : MonoBehaviour
         canMove = true;
         EnableComponents();
     }
+
     public void beginVault(Vector3 pos)
     {
         moveDirection = Vector3.zero;
@@ -145,7 +172,7 @@ public abstract class Tagger : MonoBehaviour
         DisableComponents();
 
         animator.SetTrigger("vault");
-        
+
         nextAnimPosition = pos;
     }
 
