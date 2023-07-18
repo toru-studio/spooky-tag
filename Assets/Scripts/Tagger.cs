@@ -1,6 +1,5 @@
 using System;
 using System.Data.Common;
-
 using UnityEngine;
 
 public abstract class Tagger : MonoBehaviour
@@ -9,6 +8,8 @@ public abstract class Tagger : MonoBehaviour
 
 
     public float moveSpeed;
+    public float sprintSpeed;
+    protected bool sprinting;
     public float playerHeight;
     public LayerMask ground;
     protected bool isOnGround;
@@ -42,17 +43,17 @@ public abstract class Tagger : MonoBehaviour
     //Moves rigidbody by adding force in the direction of moveDirection
     protected void Move(float inputV, float inputH)
     {
-        if (canMove)
-        {
-            moveDirection = orientation.forward * inputV + orientation.right * inputH;
-            rigidbody.AddForce(moveDirection.normalized * moveSpeed, ForceMode.Force);
-        }
+        if (!canMove) return;
+        moveDirection = orientation.forward * inputV + orientation.right * inputH;
+        var speed = sprinting ? sprintSpeed : moveSpeed;
+        rigidbody.AddForce(moveDirection.normalized * speed, ForceMode.Force);
     }
-   protected void Jump()
-   {
-       moveDirection += Vector3.up * jumpHeight;
-       rigidbody.AddForce(moveDirection, ForceMode.Impulse);
-   }
+
+    protected void Jump()
+    {
+        moveDirection += Vector3.up * (jumpHeight / 100f);
+        rigidbody.AddForce(moveDirection, ForceMode.Impulse);
+    }
 
     public void beginClimb(Vector3 pos, Vector3 dir)
     {
@@ -63,7 +64,7 @@ public abstract class Tagger : MonoBehaviour
         DisableComponents();
         // Change the position to current - the difference in height from animating (2)
         Vector3 curPos = transform.position;
-        transform.position = new Vector3(curPos.x, pos.y - 2,curPos.z);
+        transform.position = new Vector3(curPos.x, pos.y - 2, curPos.z);
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
         // Save the target position
@@ -78,7 +79,7 @@ public abstract class Tagger : MonoBehaviour
         canMove = true;
         EnableComponents();
     }
-    
+
     public void beginVault()
     {
     }
@@ -86,11 +87,11 @@ public abstract class Tagger : MonoBehaviour
     public void beginSlide()
     {
     }
-    
+
     // Disables any components
     // NOTE: Could be used to disables the AI's tagging and attacking abilities
     protected abstract void DisableComponents();
-    
+
     // Enables any components
     // NOTE: Could be sued to enable the AI's tagging and attacking abilities
     protected abstract void EnableComponents();

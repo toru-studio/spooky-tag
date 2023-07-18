@@ -2,13 +2,14 @@ using UnityEngine;
 
 public class PlayerMovement : Tagger
 {
-
     // Horizontal and Vertical inputs
     float inputH;
     float inputV;
     private CameraController camera;
 
     [Header("KeyBinds")] public KeyCode jumpKey = KeyCode.Space;
+
+    public KeyCode sprintKey = KeyCode.LeftShift;
 
 
     // Start is called before the first frame update
@@ -25,7 +26,6 @@ public class PlayerMovement : Tagger
         Inputs();
     }
 
-    
 
     private void FixedUpdate()
     {
@@ -36,12 +36,13 @@ public class PlayerMovement : Tagger
     {
         inputH = Input.GetAxisRaw("Horizontal");
         inputV = Input.GetAxisRaw("Vertical");
-        if (Input.GetKey(jumpKey)  && isOnGround)
+        if (Input.GetKey(jumpKey) && isOnGround)
         {
             Jump();
         }
+        sprinting = Input.GetKey(sprintKey);
     }
-    
+
     // Disables the camera
     protected override void DisableComponents()
     {
