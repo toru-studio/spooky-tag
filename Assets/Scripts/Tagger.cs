@@ -79,7 +79,7 @@ public abstract class Tagger : MonoBehaviour
         canMove = true;
         EnableComponents();
     }
-    public void beginVault(Vector3 pos, Vector3 cameraTarget)
+    public void beginVault(Vector3 pos)
     {
         moveDirection = Vector3.zero;
 
@@ -88,7 +88,11 @@ public abstract class Tagger : MonoBehaviour
         // I would like this to be abstracted but for now this will do
         if (camera != null)
         {
-            camera.transform.LookAt(cameraTarget);
+            Vector3 cameraLookDir = pos - camera.transform.position;
+            cameraLookDir.y = 0.0f;
+            Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
+            camera.transform.rotation = rotation;
+            transform.rotation = rotation;
         }
         animator.SetTrigger("vault");
         
