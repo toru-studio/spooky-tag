@@ -1,11 +1,20 @@
+using System;
 using System.Data.Common;
+
 using UnityEngine;
 
 public abstract class Tagger : MonoBehaviour
 {
     protected Vector3 moveDirection;
-    public float moveSpeed;
 
+
+    public float moveSpeed;
+    public float playerHeight;
+    public LayerMask ground;
+    protected bool isOnGround;
+    public float gDrag;
+    public float aDrag;
+    public float jumpHeight;
 
     public Transform orientation;
     protected Rigidbody rigidbody;
@@ -25,18 +34,11 @@ public abstract class Tagger : MonoBehaviour
         curAnim = "empty";
     }
 
-    //Moves rigidbody by adding force in the direction of moveDirection
-    protected void Move(float inputV, float inputH)
-    {
-        if (canMove)
-        {
-            moveDirection = orientation.forward * inputV + orientation.right * inputH;
-            rigidbody.AddForce(moveDirection.normalized * moveSpeed, ForceMode.Force);
-        }
-    }
-
     protected void Update()
     {
+        isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight, ground);
+        _rigidbody.drag = isOnGround ? gDrag : aDrag;
+        
         // Checks the current animation
         switch (curAnim)
         {
@@ -50,8 +52,23 @@ public abstract class Tagger : MonoBehaviour
                 }
                 break;
         }
-        
     }
+
+
+    //Moves rigidbody by adding force in the direction of moveDirection
+    protected void Move(float inputV, float inputH)
+    {
+        if (canMove)
+        {
+            moveDirection = orientation.forward * inputV + orientation.right * inputH;
+            rigidbody.AddForce(moveDirection.normalized * moveSpeed, ForceMode.Force);
+        }
+    }
+   protected void Jump()
+   {
+       moveDirection += Vector3.up * jumpHeight;
+        _rigidbody.AddForce(moveDirection, ForceMode.Impulse);
+   }
 
     public void beginClimb(Vector3 pos)
     {
@@ -80,14 +97,13 @@ public abstract class Tagger : MonoBehaviour
         // Update animation state
         curAnim = "empty";
     }
+    
     public void beginVault()
     {
-        
     }
 
     public void beginSlide()
     {
-        
     }
     
     // Disables any components
