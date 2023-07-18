@@ -2,11 +2,13 @@ using UnityEngine;
 
 public class PlayerMovement : Tagger
 {
-    public bool canMove = true;
+    bool canMove = true;
 
     // Horizontal and Vertical inputs
     float inputH;
     float inputV;
+
+    [Header("KeyBinds")] public KeyCode jumpKey = KeyCode.Space;
 
 
     // Start is called before the first frame update
@@ -18,6 +20,7 @@ public class PlayerMovement : Tagger
     // Update is called once per frame
     void Update()
     {
+        base.Update();
         Inputs();
     }
 
@@ -30,5 +33,9 @@ public class PlayerMovement : Tagger
     {
         inputH = Input.GetAxisRaw("Horizontal");
         inputV = Input.GetAxisRaw("Vertical");
+        if (Input.GetKey(jumpKey)  && isOnGround)
+        {
+            Jump();
+        }
     }
 }
