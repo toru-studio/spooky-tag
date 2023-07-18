@@ -10,6 +10,7 @@ public abstract class Tagger : MonoBehaviour
     public float moveSpeed;
     public float sprintSpeed;
     protected bool sprinting;
+    public float airMultiplier;
     public float playerHeight;
     public LayerMask ground;
     protected bool isOnGround;
@@ -34,7 +35,7 @@ public abstract class Tagger : MonoBehaviour
 
     protected void Update()
     {
-        isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f, ground);
+        isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, ground);
         rigidbody.drag = isOnGround ? gDrag : aDrag;
     }
 
@@ -45,13 +46,22 @@ public abstract class Tagger : MonoBehaviour
         if (!canMove) return;
         moveDirection = orientation.forward * inputV + orientation.right * inputH;
         var speed = sprinting ? sprintSpeed : moveSpeed;
-        rigidbody.AddForce(moveDirection.normalized * speed, ForceMode.Force);
+        var speedAir = isOnGround ? speed : speed * airMultiplier;
+        rigidbody.AddForce(moveDirection.normalized * speedAir, ForceMode.Force);
     }
 
     protected void Jump()
     {
         moveDirection += Vector3.up * (jumpHeight / 100f);
         rigidbody.AddForce(moveDirection, ForceMode.Impulse);
+    }
+
+    protected void speedLimiter()
+    {
+        Vector3 velocityLimit = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
+        if (!(velocityLimit.magnitude > sprintSpeed)) return;
+        Vector3 limitVelocity = velocityLimit.normalized * sprintSpeed;
+        rigidbody.velocity = new Vector3(limitVelocity.x, limitVelocity.y, limitVelocity.z);
     }
 
     public void beginClimb(Vector3 pos, Vector3 dir)
