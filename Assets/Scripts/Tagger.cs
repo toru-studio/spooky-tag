@@ -35,7 +35,7 @@ public abstract class Tagger : MonoBehaviour
 
     protected void Update()
     {
-        isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight, ground);
+        isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f, ground);
         rigidbody.drag = isOnGround ? gDrag : aDrag;
     }
 
