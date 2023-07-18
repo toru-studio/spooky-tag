@@ -5,7 +5,6 @@ public class PlayerMovement : Tagger
     // Horizontal and Vertical inputs
     float inputH;
     float inputV;
-    public CameraController camera;
 
     [Header("KeyBinds")] public KeyCode jumpKey = KeyCode.Space;
 
@@ -45,12 +44,12 @@ public class PlayerMovement : Tagger
     // Disables the camera
     protected override void DisableComponents()
     {
-        camera.enabled = false;
+        base.camera.enabled = false;
     }
 
     // Enables the camera
     protected override void EnableComponents()
     {
-        camera.enabled = true;
+        base.camera.enabled = true;
     }
 }

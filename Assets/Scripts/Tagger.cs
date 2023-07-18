@@ -18,6 +18,7 @@ public abstract class Tagger : MonoBehaviour
     public float jumpHeight;
 
     public Transform orientation;
+    public CameraController camera;
     protected Rigidbody rigidbody;
     protected Animator animator;
     private Vector3 nextAnimPosition;
@@ -78,13 +79,17 @@ public abstract class Tagger : MonoBehaviour
         canMove = true;
         EnableComponents();
     }
-    public void beginVault(Vector3 pos)
+    public void beginVault(Vector3 pos, Vector3 cameraTarget)
     {
         moveDirection = Vector3.zero;
 
         canMove = false;
         DisableComponents();
-
+        // I would like this to be abstracted but for now this will do
+        if (camera != null)
+        {
+            camera.transform.LookAt(cameraTarget);
+        }
         animator.SetTrigger("vault");
         
         nextAnimPosition = pos;

@@ -35,25 +35,28 @@ public class VaultTrigger : MonoBehaviour
             float dotForward = Vector3.Dot(localDir, transform.forward);
             
             Vector3 pos;
+            Vector3 cameraTarget;
             
             if (Math.Abs(dotRight) > Math.Abs(dotForward))
             {
                 float xOffset = (scale + other.transform.localScale.x) * Mathf.Sign(dotRight);
                 pos = other.transform.position;
                 pos.x -= xOffset;
+                cameraTarget = pos + transform.right * (scale + other.transform.localScale.x);
             }
             else
             {
                 float zOffset = (scale + other.transform.localScale.x) * Mathf.Sign(dotForward);
                 pos = other.transform.position;
                 pos.z -= zOffset;
+                cameraTarget = pos + transform.forward * (scale + other.transform.localScale.x);
             }
 
             if (taggers.Length > 0)
             {
                 foreach (Tagger tagger in taggers)
                 { 
-                    tagger.beginVault(pos);
+                    tagger.beginVault(pos, cameraTarget);
                 }
             }
         }
