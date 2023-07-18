@@ -1,29 +1,55 @@
-using System;
-using System.Data.Common;
 using UnityEngine;
 
 public abstract class Tagger : MonoBehaviour
 {
-    protected Vector3 moveDirection;
+    private Vector3 moveDirection;
 
-
-    public float moveSpeed;
+    [Header("Speeds")]
+    private float moveSpeed;
+    public float walkSpeed;
     public float sprintSpeed;
-    protected bool sprinting;
+    public float crouchSpeed;
     public float airMultiplier;
-    public float playerHeight;
-    public LayerMask ground;
+
+    [Header("States")]
+    public MoveState currentState;
+    protected bool isSprinting;
     protected bool isOnGround;
+    protected bool isCrouching;
+
+    [Header("Heights")] 
+    public float playerHeight;
+    protected float playerHeightStartScale;
+    public float jumpHeight;
+    public float crouchHeightScale;
+    
+    
+    
+    [Header("Drag Control")]
     public float gDrag;
     public float aDrag;
-    public float jumpHeight;
+    [Header("Misc")]
 
+    public LayerMask ground;
     public Transform orientation;
+    public bool canMove = true;
+
+
     protected Rigidbody rigidbody;
     protected Animator animator;
     private Vector3 nextAnimPosition;
 
-    public bool canMove = true;
+
+    public enum MoveState
+    {
+        inAir,
+        inSprint,
+        inWalk,
+        inCrouch,
+        inSlide
+    }
+
+
 
     // Start is called before the first frame update
     protected void Start()
@@ -31,21 +57,44 @@ public abstract class Tagger : MonoBehaviour
         animator = GetComponentInChildren<CharacterCollection>().GetComponent<Animator>();
         moveDirection = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
+        playerHeightStartScale = transform.localScale.y;
     }
 
     protected void Update()
     {
         isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, ground);
         rigidbody.drag = isOnGround ? gDrag : aDrag;
+        changeState();
     }
 
+    protected void changeState()
+    {
+        if (isOnGround && isSprinting)
+        {
+            currentState = MoveState.inSprint;
+            moveSpeed = sprintSpeed;
+        }
+        else if (isOnGround)
+        {
+            currentState = MoveState.inWalk;
+            moveSpeed = walkSpeed;
+        }else if (isOnGround && isCrouching)
+        {
+            currentState = MoveState.inCrouch;
+            moveSpeed = crouchSpeed;
+        }
+        else
+        {
+            currentState = MoveState.inAir;
+        }
+    }
 
     //Moves rigidbody by adding force in the direction of moveDirection
     protected void Move(float inputV, float inputH)
     {
         if (!canMove) return;
         moveDirection = orientation.forward * inputV + orientation.right * inputH;
-        var speed = sprinting ? sprintSpeed : moveSpeed;
+        var speed = isSprinting ? sprintSpeed : moveSpeed;
         var speedAir = isOnGround ? speed : speed * airMultiplier;
         rigidbody.AddForce(moveDirection.normalized * speedAir, ForceMode.Force);
     }
