@@ -30,7 +30,6 @@ public abstract class Tagger : MonoBehaviour
         animator = GetComponentInChildren<CharacterCollection>().GetComponent<Animator>();
         moveDirection = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
-        rigidbody.freezeRotation = true;
     }
 
     protected void Update()
