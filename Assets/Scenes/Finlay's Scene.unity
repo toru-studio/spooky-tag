@@ -748,7 +748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   moveSpeed: 100
-  sprintSpeed: 0
+  sprintSpeed: 200
   playerHeight: 2
   ground:
     serializedVersion: 2
@@ -757,8 +757,8 @@ MonoBehaviour:
   aDrag: 1
   jumpHeight: 1
   orientation: {fileID: 579134700}
-  canMove: 1
   camera: {fileID: 1956642438}
+  canMove: 1
   jumpKey: 32
   sprintKey: 304
 --- !u!54 &1532190827
