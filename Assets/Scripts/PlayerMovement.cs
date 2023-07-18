@@ -5,7 +5,7 @@ public class PlayerMovement : Tagger
     // Horizontal and Vertical inputs
     float inputH;
     float inputV;
-    private CameraController camera;
+    public CameraController camera;
 
     [Header("KeyBinds")] public KeyCode jumpKey = KeyCode.Space;
 
@@ -16,7 +16,6 @@ public class PlayerMovement : Tagger
     void Start()
     {
         base.Start();
-        camera = gameObject.GetComponent<CameraController>();
     }
 
     // Update is called once per frame

@@ -21,4 +21,9 @@ public class CharacterCollection : MonoBehaviour
         GetComponentInParent<Tagger>().endClimb();
     }
 
+    public void endVault()
+    {
+        GetComponentInParent<Tagger>().endVault();
+    }
+
 }
