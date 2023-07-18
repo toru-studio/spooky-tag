@@ -20,7 +20,6 @@ public abstract class Tagger : MonoBehaviour
     protected Rigidbody rigidbody;
     protected Animator animator;
     private Vector3 nextAnimPosition;
-    private string curAnim;
 
     public bool canMove = true;
 
@@ -31,27 +30,12 @@ public abstract class Tagger : MonoBehaviour
         moveDirection = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
         rigidbody.freezeRotation = true;
-        curAnim = "empty";
     }
 
     protected void Update()
     {
         isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight, ground);
-        _rigidbody.drag = isOnGround ? gDrag : aDrag;
-        
-        // Checks the current animation
-        switch (curAnim)
-        {
-            case "empty":
-                break;
-            case "climb":
-                // If the animation is in transition to the Empty state end Climb
-                if (animator.IsInTransition(0) && animator.GetNextAnimatorStateInfo(0).IsName("Empty"))
-                {
-                    endClimb();
-                }
-                break;
-        }
+        rigidbody.drag = isOnGround ? gDrag : aDrag;
     }
 
 
@@ -67,10 +51,10 @@ public abstract class Tagger : MonoBehaviour
    protected void Jump()
    {
        moveDirection += Vector3.up * jumpHeight;
-        _rigidbody.AddForce(moveDirection, ForceMode.Impulse);
+       rigidbody.AddForce(moveDirection, ForceMode.Impulse);
    }
 
-    public void beginClimb(Vector3 pos)
+    public void beginClimb(Vector3 pos, Vector3 dir)
     {
         // Clear Velocity
         moveDirection = Vector3.zero;
@@ -82,20 +66,17 @@ public abstract class Tagger : MonoBehaviour
         transform.position = new Vector3(curPos.x, pos.y - 2,curPos.z);
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
-        curAnim = "climb";
         // Save the target position
         nextAnimPosition = pos;
     }
 
-    private void endClimb()
+    public void endClimb()
     {
         // Teleport the player to the expected position
         transform.position = nextAnimPosition;
         // Enable Movement and Components
         canMove = true;
         EnableComponents();
-        // Update animation state
-        curAnim = "empty";
     }
     
     public void beginVault()

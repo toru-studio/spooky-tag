@@ -40,7 +40,7 @@ public class ClimbTrigger : MonoBehaviour
         {
             foreach (Tagger tagger in taggers)
             { 
-                tagger.beginClimb(new Vector3(xCoord, yCoord, zCoord));
+                tagger.beginClimb(new Vector3(xCoord, yCoord, zCoord), dir);
             }
         }
     }
