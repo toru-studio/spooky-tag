@@ -553,13 +553,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 454c5a81ef7222944836688a0e4fcb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 40
+  moveSpeed: 100
   playerHeight: 2
   ground:
     serializedVersion: 2
-    m_Bits: 0
-  gDrag: 5
-  aDrag: 2.5
+    m_Bits: 1024
+  gDrag: 2.5
+  aDrag: 1
   jumpHeight: 1
   orientation: {fileID: 579134700}
   canMove: 1
@@ -587,7 +587,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1532190824}
   serializedVersion: 4
-  m_Mass: 10
+  m_Mass: 5
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -603,9 +603,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 1
   m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
+  m_Interpolate: 1
+  m_Constraints: 112
+  m_CollisionDetection: 1
 --- !u!4 &1532190828
 Transform:
   m_ObjectHideFlags: 0
@@ -656,7 +656,7 @@ GameObject:
   - component: {fileID: 1586240553}
   - component: {fileID: 1586240552}
   - component: {fileID: 1586240551}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Plane
   m_TagString: Untagged
   m_Icon: {fileID: 0}
