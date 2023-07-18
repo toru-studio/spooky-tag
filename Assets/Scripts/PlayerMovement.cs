@@ -41,6 +41,7 @@ public class PlayerMovement : Tagger
             Jump();
         }
         sprinting = Input.GetKey(sprintKey);
+        speedLimiter();
     }
 
     // Disables the camera
