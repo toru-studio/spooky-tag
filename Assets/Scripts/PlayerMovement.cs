@@ -2,11 +2,11 @@ using UnityEngine;
 
 public class PlayerMovement : Tagger
 {
-    bool canMove = true;
 
     // Horizontal and Vertical inputs
     float inputH;
     float inputV;
+    private CameraController camera;
 
     [Header("KeyBinds")] public KeyCode jumpKey = KeyCode.Space;
 
@@ -15,6 +15,7 @@ public class PlayerMovement : Tagger
     void Start()
     {
         base.Start();
+        camera = gameObject.GetComponent<CameraController>();
     }
 
     // Update is called once per frame
@@ -23,6 +24,8 @@ public class PlayerMovement : Tagger
         base.Update();
         Inputs();
     }
+
+    
 
     private void FixedUpdate()
     {
@@ -37,5 +40,17 @@ public class PlayerMovement : Tagger
         {
             Jump();
         }
+    }
+    
+    // Disables the camera
+    protected override void DisableComponents()
+    {
+        camera.enabled = false;
+    }
+
+    // Enables the camera
+    protected override void EnableComponents()
+    {
+        camera.enabled = true;
     }
 }
