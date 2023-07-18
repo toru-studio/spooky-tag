@@ -78,6 +78,10 @@ public abstract class Tagger : MonoBehaviour
         {
             currentState = MoveState.inWalk;
             moveSpeed = walkSpeed;
+        }else if (isOnGround && isCrouching)
+        {
+            currentState = MoveState.inCrouch;
+            moveSpeed = crouchSpeed;
         }
         else
         {
