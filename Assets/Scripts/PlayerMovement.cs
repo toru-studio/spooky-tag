@@ -8,6 +8,8 @@ public class PlayerMovement : Tagger
     float inputV;
     private CameraController camera;
 
+    [Header("KeyBinds")] public KeyCode jumpKey = KeyCode.Space;
+
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +36,10 @@ public class PlayerMovement : Tagger
     {
         inputH = Input.GetAxisRaw("Horizontal");
         inputV = Input.GetAxisRaw("Vertical");
+        if (Input.GetKey(jumpKey)  && isOnGround)
+        {
+            Jump();
+        }
     }
     
     // Disables the camera

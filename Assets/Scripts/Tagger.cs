@@ -1,11 +1,20 @@
+using System;
 using System.Data.Common;
+
 using UnityEngine;
 
 public abstract class Tagger : MonoBehaviour
 {
     protected Vector3 moveDirection;
-    public float moveSpeed;
 
+
+    public float moveSpeed;
+    public float playerHeight;
+    public LayerMask ground;
+    protected bool isOnGround;
+    public float gDrag;
+    public float aDrag;
+    public float jumpHeight;
 
     public Transform orientation;
     protected Rigidbody rigidbody;
@@ -23,6 +32,13 @@ public abstract class Tagger : MonoBehaviour
         rigidbody.freezeRotation = true;
     }
 
+    protected void Update()
+    {
+        isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight, ground);
+        rigidbody.drag = isOnGround ? gDrag : aDrag;
+    }
+
+
     //Moves rigidbody by adding force in the direction of moveDirection
     protected void Move(float inputV, float inputH)
     {
@@ -32,10 +48,11 @@ public abstract class Tagger : MonoBehaviour
             rigidbody.AddForce(moveDirection.normalized * moveSpeed, ForceMode.Force);
         }
     }
-
-    protected void Update()
-    {
-    }
+   protected void Jump()
+   {
+       moveDirection += Vector3.up * jumpHeight;
+       rigidbody.AddForce(moveDirection, ForceMode.Impulse);
+   }
 
     public void beginClimb(Vector3 pos, Vector3 dir)
     {
@@ -61,14 +78,13 @@ public abstract class Tagger : MonoBehaviour
         canMove = true;
         EnableComponents();
     }
+    
     public void beginVault()
     {
-        
     }
 
     public void beginSlide()
     {
-        
     }
     
     // Disables any components
