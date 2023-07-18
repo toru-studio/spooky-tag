@@ -9,6 +9,8 @@ public class PlayerMovement : Tagger
 
     [Header("KeyBinds")] public KeyCode jumpKey = KeyCode.Space;
 
+    public KeyCode crouchKey = KeyCode.LeftControl;
+
     public KeyCode sprintKey = KeyCode.LeftShift;
 
 
@@ -28,7 +30,7 @@ public class PlayerMovement : Tagger
 
     private void FixedUpdate()
     {
-        base.Move(inputV, inputH);
+        Move(inputV, inputH);
     }
 
     private void Inputs()
@@ -39,7 +41,10 @@ public class PlayerMovement : Tagger
         {
             Jump();
         }
-        sprinting = Input.GetKey(sprintKey);
+
+        isSprinting = Input.GetKey(sprintKey);
+
+
         speedLimiter();
     }
 
