@@ -79,9 +79,31 @@ public abstract class Tagger : MonoBehaviour
         canMove = true;
         EnableComponents();
     }
+<<<<<<< Updated upstream
 
     public void beginVault()
+=======
+    
+    public void beginVault(Vector3 pos)
+>>>>>>> Stashed changes
     {
+        moveDirection = Vector3.zero;
+
+        canMove = false;
+        DisableComponents();
+
+        animator.SetTrigger("vault");
+        
+        nextAnimPosition = pos;
+    }
+
+    public void endVault()
+    {
+        // Teleport the player to the expected position
+        transform.position = nextAnimPosition;
+        // Enable Movement and Components
+        canMove = true;
+        EnableComponents();
     }
 
     public void beginSlide()
