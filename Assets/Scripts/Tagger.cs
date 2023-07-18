@@ -79,13 +79,7 @@ public abstract class Tagger : MonoBehaviour
         canMove = true;
         EnableComponents();
     }
-<<<<<<< Updated upstream
-
-    public void beginVault()
-=======
-    
     public void beginVault(Vector3 pos)
->>>>>>> Stashed changes
     {
         moveDirection = Vector3.zero;
 
