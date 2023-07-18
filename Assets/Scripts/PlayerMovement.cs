@@ -16,7 +16,7 @@ public class PlayerMovement : Tagger
     void Start()
     {
         base.Start();
-        camera = gameObject.GetComponent<CameraController>();
+        camera = FindObjectOfType<CameraController>();
     }
 
     // Update is called once per frame
