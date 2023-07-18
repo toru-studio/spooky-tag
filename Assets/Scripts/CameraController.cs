@@ -4,6 +4,7 @@ public class CameraController : MonoBehaviour
 {
     public float sensitivity;
     public Transform orientation;
+    public Transform player;
 
     private float rotationY;
     private float rotationX;
@@ -33,6 +34,7 @@ public class CameraController : MonoBehaviour
 
             transform.rotation = Quaternion.Euler(rotationX, rotationY, 0);
             orientation.rotation = Quaternion.Euler(0, rotationY, 0);
+            player.rotation = Quaternion.Euler(0, rotationY, 0);
         }
     }
 }
