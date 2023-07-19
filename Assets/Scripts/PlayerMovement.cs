@@ -8,6 +8,8 @@ public class PlayerMovement : Tagger
 
     [Header("KeyBinds")] public KeyCode jumpKey = KeyCode.Space;
 
+    public KeyCode crouchKey = KeyCode.LeftControl;
+
     public KeyCode sprintKey = KeyCode.LeftShift;
 
 
@@ -27,7 +29,7 @@ public class PlayerMovement : Tagger
 
     private void FixedUpdate()
     {
-        base.Move(inputV, inputH);
+        Move(inputV, inputH);
     }
 
     private void Inputs()
@@ -38,7 +40,23 @@ public class PlayerMovement : Tagger
         {
             Jump();
         }
-        sprinting = Input.GetKey(sprintKey);
+
+        isSprinting = Input.GetKey(sprintKey);
+
+        if (Input.GetKeyDown(crouchKey))
+        {
+            isCrouching = true;
+            transform.localScale = new Vector3(transform.localScale.x, crouchHeightScale, transform.localScale.z);
+            rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        }
+        
+        if (Input.GetKeyUp(crouchKey))
+        {
+            isCrouching = false;
+            transform.localScale = new Vector3(transform.localScale.x, playerHeightStartScale, transform.localScale.z);
+        }
+
+        speedLimiter();
     }
 
     // Disables the camera

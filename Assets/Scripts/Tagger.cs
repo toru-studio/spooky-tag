@@ -1,29 +1,57 @@
-using System;
-using System.Data.Common;
 using UnityEngine;
 
 public abstract class Tagger : MonoBehaviour
 {
-    protected Vector3 moveDirection;
+    private Vector3 moveDirection;
 
-
-    public float moveSpeed;
-    public float sprintSpeed;
-    protected bool sprinting;
-    public float playerHeight;
-    public LayerMask ground;
+    [Header("States")]
+    public MoveState currentState;
+    protected bool isSprinting;
     protected bool isOnGround;
+    protected bool isCrouching;
+
+    [Header("Speeds")]
+    private float moveSpeed;
+    public float walkSpeed;
+    public float sprintSpeed;
+    public float crouchSpeed;
+    public float airMultiplier;
+
+    [Header("Slopes")]
+    public float maxAngle;
+    private RaycastHit slopeHit;
+
+    [Header("Heights")]
+    public float playerHeight;
+    protected float playerHeightStartScale;
+    public float jumpHeight;
+    public float crouchHeightScale;
+
+    [Header("Drag Control")]
     public float gDrag;
     public float aDrag;
-    public float jumpHeight;
 
+    [Header("Misc")]
+    public LayerMask ground;
     public Transform orientation;
+    public bool canMove = true;
     public CameraController camera;
+    
     protected Rigidbody rigidbody;
     protected Animator animator;
     private Vector3 nextAnimPosition;
 
-    public bool canMove = true;
+
+    public enum MoveState
+    {
+        inAir,
+        inSprint,
+        inWalk,
+        inCrouch,
+        onSlope,
+        inSlide
+    }
+
 
     // Start is called before the first frame update
     protected void Start()
@@ -31,28 +59,107 @@ public abstract class Tagger : MonoBehaviour
         animator = GetComponentInChildren<CharacterCollection>().GetComponent<Animator>();
         moveDirection = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
+        playerHeightStartScale = transform.localScale.y;
     }
 
     protected void Update()
     {
-        isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f, ground);
+        isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, ground);
         rigidbody.drag = isOnGround ? gDrag : aDrag;
+        changeState();
     }
 
+    protected void changeState()
+    {
+        if (isOnGround && isSprinting)
+        {
+            currentState = MoveState.inSprint;
+            moveSpeed = sprintSpeed;
+        }
+        else if (isCrouching)
+        {
+            currentState = MoveState.inCrouch;
+            moveSpeed = crouchSpeed;
+        }
+        else if (isOnGround)
+        {
+            currentState = MoveState.inWalk;
+            moveSpeed = walkSpeed;
+        }
+        else if (OnSlope())
+        {
+            currentState = MoveState.onSlope;
+        }
+        else
+        {
+            currentState = MoveState.inAir;
+        }
+    }
 
     //Moves rigidbody by adding force in the direction of moveDirection
     protected void Move(float inputV, float inputH)
     {
-        if (!canMove) return;
         moveDirection = orientation.forward * inputV + orientation.right * inputH;
-        var speed = sprinting ? sprintSpeed : moveSpeed;
-        rigidbody.AddForce(moveDirection.normalized * speed, ForceMode.Force);
+        if (OnSlope())
+        {
+            rigidbody.AddForce(getSlopeMove() * (moveSpeed * 20f), ForceMode.Force);
+            if (rigidbody.velocity.y > 0)
+            {
+                rigidbody.AddForce(Vector3.down * 80f, ForceMode.Force);
+            }
+        }
+        else
+            switch (isOnGround)
+            {
+                case true:
+                    rigidbody.AddForce(moveDirection.normalized * (moveSpeed * 10f), ForceMode.Force);
+                    break;
+                case false:
+                    rigidbody.AddForce(moveDirection.normalized * (moveSpeed * 10f * airMultiplier), ForceMode.Force);
+                    break;
+            }
     }
 
     protected void Jump()
     {
-        moveDirection += Vector3.up * (jumpHeight / 100f);
-        rigidbody.AddForce(moveDirection, ForceMode.Impulse);
+        rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
+        rigidbody.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
+    }
+
+    private bool OnSlope()
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.2f))
+        {
+            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+            print(angle < maxAngle && angle != 0);
+            return angle < maxAngle && angle != 0;
+        }
+
+        return false;
+    }
+
+    private Vector3 getSlopeMove()
+    {
+        return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
+    }
+
+    protected void speedLimiter()
+    {
+        var velocity = rigidbody.velocity;
+        var velocityLimit = new Vector3(velocity.x, 0f, velocity.z);
+        var limitVelocity = velocityLimit.normalized * moveSpeed;
+        if (OnSlope())
+        {
+            if (rigidbody.velocity.magnitude > moveSpeed)
+            {
+                rigidbody.velocity = rigidbody.velocity.normalized * moveSpeed;
+            }
+        }
+        else
+        {
+            if (!(velocityLimit.magnitude > moveSpeed)) return;
+            rigidbody.velocity = new Vector3(limitVelocity.x, rigidbody.velocity.y, limitVelocity.z);
+        }
     }
 
     public void beginClimb(Vector3 pos)
@@ -85,6 +192,7 @@ public abstract class Tagger : MonoBehaviour
         canMove = true;
         EnableComponents();
     }
+
     public void beginVault(Vector3 pos)
     {
         moveDirection = Vector3.zero;
@@ -101,7 +209,7 @@ public abstract class Tagger : MonoBehaviour
             transform.rotation = rotation;
         }
         animator.SetTrigger("vault");
-        
+
         nextAnimPosition = pos;
     }
 
