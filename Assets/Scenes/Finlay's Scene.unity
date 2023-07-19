@@ -135,7 +135,7 @@ GameObject:
   - component: {fileID: 319905930}
   - component: {fileID: 319905929}
   - component: {fileID: 319905928}
-  m_Layer: 0
+  m_Layer: 10
   m_Name: Cube
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -747,19 +747,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 454c5a81ef7222944836688a0e4fcb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 100
-  sprintSpeed: 200
+  currentState: 0
+  walkSpeed: 10
+  sprintSpeed: 15
+  crouchSpeed: 5
+  airMultiplier: 0.2
+  maxAngle: 0
   playerHeight: 2
+  jumpHeight: 10
+  crouchHeightScale: 0.5
+  gDrag: 2.5
+  aDrag: 1
   ground:
     serializedVersion: 2
     m_Bits: 1024
-  gDrag: 2.5
-  aDrag: 1
-  jumpHeight: 1
   orientation: {fileID: 579134700}
-  camera: {fileID: 1956642438}
   canMove: 1
+  camera: {fileID: 1956642438}
   jumpKey: 32
+  crouchKey: 306
   sprintKey: 304
 --- !u!54 &1532190827
 Rigidbody:

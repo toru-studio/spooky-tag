@@ -99,25 +99,29 @@ public abstract class Tagger : MonoBehaviour
     //Moves rigidbody by adding force in the direction of moveDirection
     protected void Move(float inputV, float inputH)
     {
-        moveDirection = orientation.forward * inputV + orientation.right * inputH;
-        if (OnSlope())
+        if (canMove)
         {
-            rigidbody.AddForce(getSlopeMove() * (moveSpeed * 20f), ForceMode.Force);
-            if (rigidbody.velocity.y > 0)
+            moveDirection = orientation.forward * inputV + orientation.right * inputH;
+            if (OnSlope())
             {
-                rigidbody.AddForce(Vector3.down * 80f, ForceMode.Force);
+                rigidbody.AddForce(getSlopeMove() * (moveSpeed * 20f), ForceMode.Force);
+                if (rigidbody.velocity.y > 0)
+                {
+                    rigidbody.AddForce(Vector3.down * 80f, ForceMode.Force);
+                }
             }
+            else
+                switch (isOnGround)
+                {
+                    case true:
+                        rigidbody.AddForce(moveDirection.normalized * (moveSpeed * 10f), ForceMode.Force);
+                        break;
+                    case false:
+                        rigidbody.AddForce(moveDirection.normalized * (moveSpeed * 10f * airMultiplier),
+                            ForceMode.Force);
+                        break;
+                }
         }
-        else
-            switch (isOnGround)
-            {
-                case true:
-                    rigidbody.AddForce(moveDirection.normalized * (moveSpeed * 10f), ForceMode.Force);
-                    break;
-                case false:
-                    rigidbody.AddForce(moveDirection.normalized * (moveSpeed * 10f * airMultiplier), ForceMode.Force);
-                    break;
-            }
     }
 
     protected void Jump()
@@ -131,7 +135,6 @@ public abstract class Tagger : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.2f))
         {
             float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            print(angle < maxAngle && angle != 0);
             return angle < maxAngle && angle != 0;
         }
 
