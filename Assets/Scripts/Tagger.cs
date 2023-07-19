@@ -55,16 +55,14 @@ public abstract class Tagger : MonoBehaviour
         rigidbody.AddForce(moveDirection, ForceMode.Impulse);
     }
 
-    public void beginClimb(Vector3 pos, Vector3 dir)
+    public void beginClimb(Vector3 pos)
     {
         // Clear Velocity
         moveDirection = Vector3.zero;
         // Disable Movement and Components
         canMove = false;
         DisableComponents();
-
-        Vector3 curPos = transform.position;
-        transform.position = new Vector3(curPos.x, pos.y - 1, curPos.z);
+        // I would like this to be abstracted but for now this will do
         if (camera != null)
         {
             Vector3 cameraLookDir = pos - camera.transform.position;
@@ -73,7 +71,6 @@ public abstract class Tagger : MonoBehaviour
             camera.transform.rotation = rotation;
             transform.rotation = rotation;
         }
-        // Change the position to current - the difference in height from animating (2)
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
         // Save the target position
