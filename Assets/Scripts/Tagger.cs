@@ -4,39 +4,38 @@ public abstract class Tagger : MonoBehaviour
 {
     private Vector3 moveDirection;
 
-    [Header("States")]
-    public MoveState currentState;
+    [Header("States")] public MoveState currentState;
     protected bool isSprinting;
     protected bool isOnGround;
     protected bool isCrouching;
+    protected bool isSliding;
 
-    [Header("Speeds")]
-    private float moveSpeed;
+    [Header("Speeds")] private float moveSpeed;
     public float walkSpeed;
     public float sprintSpeed;
     public float crouchSpeed;
     public float airMultiplier;
 
-    [Header("Slopes")]
-    public float maxAngle;
+    [Header("Slide")] public float slideTimer;
+    public float slideForce;
+    public float maxSlideTime;
+
+    [Header("Slopes")] public float maxAngle;
     private RaycastHit slopeHit;
 
-    [Header("Heights")]
-    public float playerHeight;
+    [Header("Heights")] public float playerHeight;
     protected float playerHeightStartScale;
     public float jumpHeight;
     public float crouchHeightScale;
 
-    [Header("Drag Control")]
-    public float gDrag;
+    [Header("Drag Control")] public float gDrag;
     public float aDrag;
 
-    [Header("Misc")]
-    public LayerMask ground;
+    [Header("Misc")] public LayerMask ground;
     public Transform orientation;
     public bool canMove = true;
     public CameraController camera;
-    
+
     protected Rigidbody rigidbody;
     protected Animator animator;
     private Vector3 nextAnimPosition;
@@ -69,24 +68,29 @@ public abstract class Tagger : MonoBehaviour
         changeState();
     }
 
-    protected void changeState()
+    private void changeState()
     {
-        if (isOnGround && isSprinting)
+        if (isSliding)
         {
-            currentState = MoveState.inSprint;
-            moveSpeed = sprintSpeed;
+            currentState = MoveState.inSlide;
         }
         else if (isCrouching)
         {
             currentState = MoveState.inCrouch;
             moveSpeed = crouchSpeed;
         }
+        else if (isOnGround && isSprinting)
+        {
+            currentState = MoveState.inSprint;
+            moveSpeed = sprintSpeed;
+        }
+
         else if (isOnGround)
         {
             currentState = MoveState.inWalk;
             moveSpeed = walkSpeed;
         }
-        else if (OnSlope())
+        else if (onSlope())
         {
             currentState = MoveState.onSlope;
         }
@@ -102,7 +106,7 @@ public abstract class Tagger : MonoBehaviour
         if (canMove)
         {
             moveDirection = orientation.forward * inputV + orientation.right * inputH;
-            if (OnSlope())
+            if (onSlope())
             {
                 rigidbody.AddForce(getSlopeMove() * (moveSpeed * 20f), ForceMode.Force);
                 if (rigidbody.velocity.y > 0)
@@ -124,21 +128,23 @@ public abstract class Tagger : MonoBehaviour
         }
     }
 
+    protected void ChangeScale(float scale)
+    {
+        transform.localScale = new Vector3(transform.localScale.x, scale, transform.localScale.z);
+    }
+
     protected void Jump()
     {
         rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
         rigidbody.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
     }
 
-    private bool OnSlope()
+    private bool onSlope()
     {
-        if (Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.2f))
-        {
-            float angle = Vector3.Angle(Vector3.up, slopeHit.normal);
-            return angle < maxAngle && angle != 0;
-        }
+        if (!Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.2f)) return false;
+        var angle = Vector3.Angle(Vector3.up, slopeHit.normal);
+        return angle < maxAngle && angle != 0;
 
-        return false;
     }
 
     private Vector3 getSlopeMove()
@@ -146,12 +152,46 @@ public abstract class Tagger : MonoBehaviour
         return Vector3.ProjectOnPlane(moveDirection, slopeHit.normal).normalized;
     }
 
+    protected void Sliding(float inputV, float inputH)
+    {
+        var inputDirection = orientation.forward * inputV + orientation.right * inputH;
+
+        if (!onSlope() || rigidbody.velocity.y > -0.1f)
+        {
+            rigidbody.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
+            slideTimer -= Time.deltaTime;
+        }
+        else
+        {
+            rigidbody.AddForce(getSlopeMove() * slideForce, ForceMode.Force);
+        }
+        if (slideTimer <= 0)
+        {
+            stopSlide();
+        }
+
+    }
+
+    protected void stopSlide()
+    {
+        isSliding = false;
+        ChangeScale(playerHeightStartScale);
+    }
+
+    protected void startSlide()
+    {
+        isSliding = true;
+        rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+        ChangeScale(crouchHeightScale);
+        slideTimer = maxSlideTime;
+    }
+
     protected void speedLimiter()
     {
         var velocity = rigidbody.velocity;
         var velocityLimit = new Vector3(velocity.x, 0f, velocity.z);
         var limitVelocity = velocityLimit.normalized * moveSpeed;
-        if (OnSlope())
+        if (onSlope())
         {
             if (rigidbody.velocity.magnitude > moveSpeed)
             {
@@ -181,6 +221,7 @@ public abstract class Tagger : MonoBehaviour
             camera.transform.rotation = rotation;
             transform.rotation = rotation;
         }
+
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
         // Save the target position
@@ -211,6 +252,7 @@ public abstract class Tagger : MonoBehaviour
             camera.transform.rotation = rotation;
             transform.rotation = rotation;
         }
+
         animator.SetTrigger("vault");
 
         nextAnimPosition = pos;
