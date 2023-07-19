@@ -4,33 +4,39 @@ public abstract class Tagger : MonoBehaviour
 {
     private Vector3 moveDirection;
 
-    [Header("States")] public MoveState currentState;
+    [Header("States")]
+    public MoveState currentState;
     protected bool isSprinting;
     protected bool isOnGround;
     protected bool isCrouching;
 
-    [Header("Speeds")] private float moveSpeed;
+    [Header("Speeds")]
+    private float moveSpeed;
     public float walkSpeed;
     public float sprintSpeed;
     public float crouchSpeed;
     public float airMultiplier;
 
-    [Header("Slopes")] public float maxAngle;
+    [Header("Slopes")]
+    public float maxAngle;
     private RaycastHit slopeHit;
 
-    [Header("Heights")] public float playerHeight;
+    [Header("Heights")]
+    public float playerHeight;
     protected float playerHeightStartScale;
     public float jumpHeight;
     public float crouchHeightScale;
 
-    [Header("Drag Control")] public float gDrag;
+    [Header("Drag Control")]
+    public float gDrag;
     public float aDrag;
 
-    [Header("Misc")] public LayerMask ground;
+    [Header("Misc")]
+    public LayerMask ground;
     public Transform orientation;
     public bool canMove = true;
-
-
+    public CameraController camera;
+    
     protected Rigidbody rigidbody;
     protected Animator animator;
     private Vector3 nextAnimPosition;
@@ -156,16 +162,22 @@ public abstract class Tagger : MonoBehaviour
         }
     }
 
-    public void beginClimb(Vector3 pos, Vector3 dir)
+    public void beginClimb(Vector3 pos)
     {
         // Clear Velocity
         moveDirection = Vector3.zero;
         // Disable Movement and Components
         canMove = false;
         DisableComponents();
-        // Change the position to current - the difference in height from animating (2)
-        Vector3 curPos = transform.position;
-        transform.position = new Vector3(curPos.x, pos.y - 2, curPos.z);
+        // I would like this to be abstracted but for now this will do
+        if (camera != null)
+        {
+            Vector3 cameraLookDir = pos - camera.transform.position;
+            cameraLookDir.y = 0.0f;
+            Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
+            camera.transform.rotation = rotation;
+            transform.rotation = rotation;
+        }
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
         // Save the target position
@@ -187,7 +199,15 @@ public abstract class Tagger : MonoBehaviour
 
         canMove = false;
         DisableComponents();
-
+        // I would like this to be abstracted but for now this will do
+        if (camera != null)
+        {
+            Vector3 cameraLookDir = pos - camera.transform.position;
+            cameraLookDir.y = 0.0f;
+            Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
+            camera.transform.rotation = rotation;
+            transform.rotation = rotation;
+        }
         animator.SetTrigger("vault");
 
         nextAnimPosition = pos;

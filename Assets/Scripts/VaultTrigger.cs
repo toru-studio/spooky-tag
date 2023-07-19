@@ -36,6 +36,7 @@ public class VaultTrigger : MonoBehaviour
             
             Vector3 pos;
             
+            
             if (Math.Abs(dotRight) > Math.Abs(dotForward))
             {
                 float xOffset = (scale + other.transform.localScale.x) * Mathf.Sign(dotRight);
@@ -48,6 +49,7 @@ public class VaultTrigger : MonoBehaviour
                 pos = other.transform.position;
                 pos.z -= zOffset;
             }
+
 
             if (taggers.Length > 0)
             {
