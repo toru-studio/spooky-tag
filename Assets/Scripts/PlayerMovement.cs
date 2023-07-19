@@ -49,15 +49,12 @@ public class PlayerMovement : Tagger
             isCrouching = true;
             transform.localScale = new Vector3(transform.localScale.x, crouchHeightScale, transform.localScale.z);
             rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-            print("Crouch");
         }
-
+        
         if (Input.GetKeyUp(crouchKey))
         {
             isCrouching = false;
             transform.localScale = new Vector3(transform.localScale.x, playerHeightStartScale, transform.localScale.z);
-
-            print("uncrouch");
         }
 
         speedLimiter();
