@@ -62,9 +62,18 @@ public abstract class Tagger : MonoBehaviour
         // Disable Movement and Components
         canMove = false;
         DisableComponents();
-        // Change the position to current - the difference in height from animating (2)
+
         Vector3 curPos = transform.position;
-        transform.position = new Vector3(curPos.x, pos.y - 2, curPos.z);
+        transform.position = new Vector3(curPos.x, pos.y - 1, curPos.z);
+        if (camera != null)
+        {
+            Vector3 cameraLookDir = pos - camera.transform.position;
+            cameraLookDir.y = 0.0f;
+            Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
+            camera.transform.rotation = rotation;
+            transform.rotation = rotation;
+        }
+        // Change the position to current - the difference in height from animating (2)
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
         // Save the target position
