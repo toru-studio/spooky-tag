@@ -23,9 +23,14 @@ public abstract class Tagger : MonoBehaviour
     [Header("Slopes")] public float maxAngle;
     private RaycastHit slopeHit;
 
+    [Header("Jumping")] 
+    public bool canJump = true;
+    public float jumpHeight;
+    public float jumpLimit;
+
+
     [Header("Heights")] public float playerHeight;
     protected float playerHeightStartScale;
-    public float jumpHeight;
     public float crouchHeightScale;
 
     [Header("Drag Control")] public float gDrag;
@@ -60,6 +65,7 @@ public abstract class Tagger : MonoBehaviour
         moveDirection = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
         playerHeightStartScale = transform.localScale.y;
+        resetJump();
     }
 
     protected void Update()
@@ -146,6 +152,13 @@ public abstract class Tagger : MonoBehaviour
         rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
         rigidbody.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
     }
+
+    protected void resetJump()
+    {
+        canJump = true;
+        
+    }
+
 
     private bool onSlope()
     {
