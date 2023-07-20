@@ -40,9 +40,11 @@ public class PlayerMovement : Tagger
     {
         inputH = Input.GetAxisRaw("Horizontal");
         inputV = Input.GetAxisRaw("Vertical");
-        if (Input.GetKey(jumpKey) && isOnGround)
+        if (Input.GetKey(jumpKey) && isOnGround && canJump)
         {
+            canJump = false;
             Jump();
+            Invoke(nameof(resetJump),jumpLimit);
         }
 
         isSprinting = Input.GetKey(sprintKey);
