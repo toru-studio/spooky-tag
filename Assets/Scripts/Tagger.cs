@@ -23,8 +23,7 @@ public abstract class Tagger : MonoBehaviour
     [Header("Slopes")] public float maxAngle;
     private RaycastHit slopeHit;
 
-    [Header("Jumping")] 
-    public bool canJump = true;
+    [Header("Jumping")] public bool canJump = true;
     public float jumpHeight;
     public float jumpLimit;
 
@@ -156,7 +155,6 @@ public abstract class Tagger : MonoBehaviour
     protected void resetJump()
     {
         canJump = true;
-        
     }
 
 
@@ -235,11 +233,6 @@ public abstract class Tagger : MonoBehaviour
         moveDirection = Vector3.zero;
         // Disable Movement and Components
         DisableComponents();
-        // I would like this to be abstracted but for now this will do
-
-        // I would like this to be abstracted but for now this will do
-
-        // TURN OFF ALL PLAYER PHYSICS
 
         // Teleports player to beginning of climb position
         Vector3 curPos = transform.position;
@@ -251,9 +244,12 @@ public abstract class Tagger : MonoBehaviour
             cameraLookDir.y = 0.0f;
             Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
             camera.transform.rotation = rotation;
+            camera.rotationX = 0f;
+            camera.rotationY = rotation.y > 0.5f ? -rotation.y + 0.5f : rotation.y;
+            camera.rotationY *= 360;
             transform.rotation = rotation;
         }
-        
+
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
         // Save the target position
@@ -295,6 +291,9 @@ public abstract class Tagger : MonoBehaviour
             cameraLookDir.y = 0.0f;
             Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
             camera.transform.rotation = rotation;
+            camera.rotationX = 0f;
+            camera.rotationY = rotation.y > 0.5f ? -rotation.y + 0.5f : rotation.y;
+            camera.rotationY *= 360;
             transform.rotation = rotation;
         }
 
