@@ -6,8 +6,8 @@ public class CameraController : MonoBehaviour
     public Transform orientation;
     public Transform player;
 
-    private float rotationY;
-    private float rotationX;
+    public float rotationY;
+    public float rotationX;
 
     public bool enabled;
 
