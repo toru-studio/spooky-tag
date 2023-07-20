@@ -36,8 +36,9 @@ public class ClimbTrigger : MonoBehaviour
         //               (parentObject.transform.localScale.x * dir.normalized.x) / 2f;
         // float zCoord = parentObject.transform.position.z - 1 + 
         //                (parentObject.transform.localScale.z * dir.normalized.z) / 2f;
-        float dotRight = Vector3.Dot(localDir, transform.right);
-        float dotForward = Vector3.Dot(localDir, transform.forward);
+        
+        float dotRight = Vector3.Dot(localDir,  parentObject.transform.right);
+        float dotForward = Vector3.Dot(localDir, parentObject.transform.forward);
                     
         Vector3 pos;
         
@@ -61,6 +62,7 @@ public class ClimbTrigger : MonoBehaviour
             foreach (Tagger tagger in taggers)
             { 
                 tagger.beginClimb(pos);
+                
             }
         }
     }
