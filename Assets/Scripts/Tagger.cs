@@ -53,7 +53,8 @@ public abstract class Tagger : MonoBehaviour
         inWalk,
         inCrouch,
         onSlope,
-        inSlide
+        inSlide,
+        inAnimation
     }
 
 
@@ -76,33 +77,40 @@ public abstract class Tagger : MonoBehaviour
 
     private void changeState()
     {
-        if (isSliding)
+        if (canMove)
         {
-            currentState = MoveState.inSlide;
-        }
-        else if (isCrouching)
-        {
-            currentState = MoveState.inCrouch;
-            moveSpeed = crouchSpeed;
-        }
-        else if (isOnGround && isSprinting)
-        {
-            currentState = MoveState.inSprint;
-            moveSpeed = sprintSpeed;
-        }
+            if (isSliding)
+            {
+                currentState = MoveState.inSlide;
+            }
+            else if (isCrouching)
+            {
+                currentState = MoveState.inCrouch;
+                moveSpeed = crouchSpeed;
+            }
+            else if (isOnGround && isSprinting)
+            {
+                currentState = MoveState.inSprint;
+                moveSpeed = sprintSpeed;
+            }
 
-        else if (isOnGround)
-        {
-            currentState = MoveState.inWalk;
-            moveSpeed = walkSpeed;
-        }
-        else if (onSlope())
-        {
-            currentState = MoveState.onSlope;
+            else if (isOnGround)
+            {
+                currentState = MoveState.inWalk;
+                moveSpeed = walkSpeed;
+            }
+            else if (onSlope())
+            {
+                currentState = MoveState.onSlope;
+            }
+            else
+            {
+                currentState = MoveState.inAir;
+            }
         }
         else
         {
-            currentState = MoveState.inAir;
+            currentState = MoveState.inAnimation;
         }
     }
 
@@ -157,7 +165,6 @@ public abstract class Tagger : MonoBehaviour
         if (!Physics.Raycast(transform.position, Vector3.down, out slopeHit, playerHeight * 0.5f + 0.2f)) return false;
         var angle = Vector3.Angle(Vector3.up, slopeHit.normal);
         return angle < maxAngle && angle != 0;
-
     }
 
     private Vector3 getSlopeMove()
@@ -167,22 +174,24 @@ public abstract class Tagger : MonoBehaviour
 
     protected void Sliding(float inputV, float inputH)
     {
-        var inputDirection = orientation.forward * inputV + orientation.right * inputH;
+        if (canMove)
+        {
+            var inputDirection = orientation.forward * inputV + orientation.right * inputH;
+            if (!onSlope() || rigidbody.velocity.y > -0.1f)
+            {
+                rigidbody.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
+                slideTimer -= Time.deltaTime;
+            }
+            else
+            {
+                rigidbody.AddForce(getSlopeMove() * slideForce, ForceMode.Force);
+            }
 
-        if (!onSlope() || rigidbody.velocity.y > -0.1f)
-        {
-            rigidbody.AddForce(inputDirection.normalized * slideForce, ForceMode.Force);
-            slideTimer -= Time.deltaTime;
+            if (slideTimer <= 0)
+            {
+                stopSlide();
+            }
         }
-        else
-        {
-            rigidbody.AddForce(getSlopeMove() * slideForce, ForceMode.Force);
-        }
-        if (slideTimer <= 0)
-        {
-            stopSlide();
-        }
-
     }
 
     protected void stopSlide()
@@ -220,12 +229,22 @@ public abstract class Tagger : MonoBehaviour
 
     public void beginClimb(Vector3 pos)
     {
+        disableMove();
+
         // Clear Velocity
         moveDirection = Vector3.zero;
         // Disable Movement and Components
-        canMove = false;
         DisableComponents();
         // I would like this to be abstracted but for now this will do
+
+        // I would like this to be abstracted but for now this will do
+
+        // TURN OFF ALL PLAYER PHYSICS
+
+        // Teleports player to beginning of climb position
+        Vector3 curPos = transform.position;
+        transform.position = new Vector3(curPos.x, pos.y - 1.8f, curPos.z);
+
         if (camera != null)
         {
             Vector3 cameraLookDir = pos - camera.transform.position;
@@ -234,20 +253,33 @@ public abstract class Tagger : MonoBehaviour
             camera.transform.rotation = rotation;
             transform.rotation = rotation;
         }
-
+        
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
         // Save the target position
         nextAnimPosition = pos;
     }
 
+    private void enableMove()
+    {
+        canMove = true;
+        rigidbody.useGravity = true;
+    }
+
+    private void disableMove()
+    {
+        canMove = false;
+        rigidbody.useGravity = false;
+    }
+
     public void endClimb()
     {
+        EnableComponents();
+        enableMove();
+
         // Teleport the player to the expected position
         transform.position = nextAnimPosition;
         // Enable Movement and Components
-        canMove = true;
-        EnableComponents();
     }
 
     public void beginVault(Vector3 pos)
