@@ -173,6 +173,13 @@ public abstract class Tagger : MonoBehaviour
         canMove = false;
         DisableComponents();
         // I would like this to be abstracted but for now this will do
+        
+        // TURN OFF ALL PLAYER PHYSICS
+        
+        // Teleports player to beginning of climb position
+        // Vector3 curPos = transform.position;
+        // transform.position = new Vector3(curPos.x, pos.y - 2, curPos.z);
+        
         if (camera != null)
         {
             Vector3 cameraLookDir = pos - camera.transform.position;
@@ -185,6 +192,7 @@ public abstract class Tagger : MonoBehaviour
         animator.SetTrigger("climb");
         // Save the target position
         nextAnimPosition = pos;
+        transform.position += transform.forward;
     }
 
     public void endClimb()
