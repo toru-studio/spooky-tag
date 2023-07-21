@@ -78,6 +78,15 @@ public abstract class Tagger : MonoBehaviour
     {
         if (canMove)
         {
+            bool isRunning = false;
+            if (rigidbody.velocity.magnitude > 0.2)
+            {
+                animator.SetBool("isMoving", true);
+            }
+            else
+            {
+                animator.SetBool("isMoving", false);
+            }
             if (isSliding)
             {
                 currentState = MoveState.inSlide;
@@ -89,6 +98,7 @@ public abstract class Tagger : MonoBehaviour
             }
             else if (isOnGround && isSprinting)
             {
+                isRunning = true;
                 currentState = MoveState.inSprint;
                 moveSpeed = sprintSpeed;
             }
@@ -106,6 +116,10 @@ public abstract class Tagger : MonoBehaviour
             {
                 currentState = MoveState.inAir;
             }
+            
+            // Set animators
+            animator.SetBool("isRunning", isRunning);
+            animator.SetBool("isCrouching", isCrouching);
         }
         else
         {
