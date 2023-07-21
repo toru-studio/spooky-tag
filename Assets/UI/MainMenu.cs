@@ -11,11 +11,6 @@ public class MainMenu : MonoBehaviour
         SceneManager.LoadScene("Finlay's Scene");
     }
 
-    public void optionButton()
-    {
-        
-    }
-
     public void quitGame()
     {
         print("Quit");
