@@ -44,7 +44,6 @@ public abstract class Tagger : MonoBehaviour
     protected Animator animator;
     private Vector3 nextAnimPosition;
 
-
     public enum MoveState
     {
         inAir,
@@ -74,10 +73,25 @@ public abstract class Tagger : MonoBehaviour
         changeState();
     }
 
+    // TODO Tidy
     private void changeState()
     {
         if (canMove)
         {
+            bool isRunning = false;
+            bool inAir = false;
+            if (isOnGround)
+            {
+                animator.SetBool("isJump", !canJump);
+            }
+            if (rigidbody.velocity.magnitude > 0.2 && isOnGround)
+            {
+                animator.SetBool("isMoving", true);
+            }
+            else
+            {
+                animator.SetBool("isMoving", false);
+            }
             if (isSliding)
             {
                 currentState = MoveState.inSlide;
@@ -89,15 +103,16 @@ public abstract class Tagger : MonoBehaviour
             }
             else if (isOnGround && isSprinting)
             {
+                isRunning = true;
                 currentState = MoveState.inSprint;
                 moveSpeed = sprintSpeed;
             }
-
             else if (isOnGround)
             {
                 currentState = MoveState.inWalk;
                 moveSpeed = walkSpeed;
             }
+            // Look into this, it may be obsolete
             else if (onSlope())
             {
                 currentState = MoveState.onSlope;
@@ -105,7 +120,14 @@ public abstract class Tagger : MonoBehaviour
             else
             {
                 currentState = MoveState.inAir;
+                inAir = true;
             }
+            
+            // Set animators
+            animator.SetBool("isSliding", isSliding);
+            animator.SetBool("inAir", inAir);
+            animator.SetBool("isRunning", isRunning);
+            animator.SetBool("isCrouching", isCrouching);
         }
         else
         {
@@ -148,11 +170,17 @@ public abstract class Tagger : MonoBehaviour
 
     protected void Jump()
     {
-        rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
-        rigidbody.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
+        if (isOnGround && canJump)
+        {
+            canJump = false;
+            rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
+            rigidbody.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
+            animator.SetTrigger("jump");
+            Invoke(nameof(resetJump),jumpLimit);
+        }
     }
 
-    protected void resetJump()
+    private void resetJump()
     {
         canJump = true;
     }
