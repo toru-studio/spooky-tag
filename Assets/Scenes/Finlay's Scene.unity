@@ -289,7 +289,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06fb6219b20ef5f4cb81fe43255ac94b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  cameraPosition: {fileID: 1406626718}
+  cameraPosition: {fileID: 1647386058347575324}
 --- !u!4 &722928567
 Transform:
   m_ObjectHideFlags: 0
@@ -503,9 +503,14 @@ MonoBehaviour:
   sprintSpeed: 7
   crouchSpeed: 3
   airMultiplier: 0.2
+  slideTimer: 0
+  slideForce: 0
+  maxSlideTime: 0
   maxAngle: 0
-  playerHeight: 2
+  canJump: 1
   jumpHeight: 2
+  jumpLimit: 0
+  playerHeight: 2
   crouchHeightScale: 0.5
   gDrag: 2.5
   aDrag: 1
@@ -1099,8 +1104,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sensitivity: 500
-  orientation: {fileID: 579134700}
+  orientation: {fileID: 1647386058347575324}
   player: {fileID: 1532190828}
+  rotationY: 0
+  rotationX: 0
   enabled: 0
 --- !u!114 &1956642439
 MonoBehaviour:
