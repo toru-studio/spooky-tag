@@ -501,7 +501,7 @@ MonoBehaviour:
   currentState: 0
   walkSpeed: 5
   sprintSpeed: 7
-  crouchSpeed: 3
+  crouchSpeed: 4
   airMultiplier: 0.2
   slideTimer: 0
   slideForce: 0
