@@ -508,8 +508,8 @@ MonoBehaviour:
   maxSlideTime: 0
   maxAngle: 0
   canJump: 1
-  jumpHeight: 2
-  jumpLimit: 0
+  jumpHeight: 20
+  jumpLimit: 0.25
   playerHeight: 2
   crouchHeightScale: 0.5
   gDrag: 2.5

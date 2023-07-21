@@ -74,12 +74,17 @@ public abstract class Tagger : MonoBehaviour
         changeState();
     }
 
+    // TODO Tidy
     private void changeState()
     {
         if (canMove)
         {
             bool isRunning = false;
             bool inAir = false;
+            if (isOnGround)
+            {
+                animator.SetBool("isJump", !canJump);
+            }
             if (rigidbody.velocity.magnitude > 0.2 && isOnGround)
             {
                 animator.SetBool("isMoving", true);
@@ -103,7 +108,6 @@ public abstract class Tagger : MonoBehaviour
                 currentState = MoveState.inSprint;
                 moveSpeed = sprintSpeed;
             }
-
             else if (isOnGround)
             {
                 currentState = MoveState.inWalk;
@@ -167,12 +171,17 @@ public abstract class Tagger : MonoBehaviour
 
     protected void Jump()
     {
-        rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
-        rigidbody.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
-        animator.SetTrigger("jump");
+        if (isOnGround && canJump)
+        {
+            canJump = false;
+            rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
+            rigidbody.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
+            animator.SetTrigger("jump");
+            Invoke(nameof(resetJump),jumpLimit);
+        }
     }
 
-    protected void resetJump()
+    private void resetJump()
     {
         canJump = true;
     }
