@@ -44,7 +44,6 @@ public abstract class Tagger : MonoBehaviour
     protected Animator animator;
     private Vector3 nextAnimPosition;
 
-
     public enum MoveState
     {
         inAir,

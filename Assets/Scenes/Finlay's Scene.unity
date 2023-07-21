@@ -504,14 +504,14 @@ MonoBehaviour:
   crouchSpeed: 4
   airMultiplier: 0.2
   slideTimer: 0
-  slideForce: 0
-  maxSlideTime: 0
+  slideForce: 2
+  maxSlideTime: 2
   maxAngle: 0
   canJump: 1
   jumpHeight: 20
   jumpLimit: 0.25
   playerHeight: 2
-  crouchHeightScale: 0.5
+  crouchHeightScale: 1
   gDrag: 2.5
   aDrag: 1
   ground:
