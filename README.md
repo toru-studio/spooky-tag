@@ -14,3 +14,4 @@ Game Jam for SCREAM DUNK! https://itch.io/jam/scream-dunk
 - [Customizable skybox](assetstore.unity.com/packages/2d/textures-materials/sky/customizable-skybox-174576), **Key Mouse** - _Skybox Textures_
 - [PSX Shader Kit](assetstore.unity.com/packages/vfx/shaders/psx-shader-kit-183591), **Valerie Moza** - _Texture Shaders_
 - [Retro PSX Style Mansion Assets](porkbellygames.itch.io/retro-mansion-assets), **PorkBelly Games** - _Structural Map Assets_
+- [Modular PSX House Architecture Kit](https://assetstore.unity.com/account/assets), **Comp-3 Interactive** - _Structural Map Assets_
