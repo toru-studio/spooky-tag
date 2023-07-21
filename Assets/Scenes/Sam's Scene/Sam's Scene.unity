@@ -793,7 +793,7 @@ GameObject:
   - component: {fileID: 219771814}
   - component: {fileID: 219771815}
   m_Layer: 0
-  m_Name: Spot Light
+  m_Name: Wide Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5269,7 +5269,7 @@ CapsuleCollider:
   m_Enabled: 1
   serializedVersion: 2
   m_Radius: 0.5
-  m_Height: 2
+  m_Height: 1
   m_Direction: 1
   m_Center: {x: 0, y: 0, z: 0}
 --- !u!23 &1400969922
@@ -5789,18 +5789,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 454c5a81ef7222944836688a0e4fcb59, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  moveSpeed: 20
-  sprintSpeed: 30
+  currentState: 0
+  walkSpeed: 3.5
+  sprintSpeed: 5
+  crouchSpeed: 1
+  airMultiplier: 0.2
+  maxAngle: 45
   playerHeight: 1
+  jumpHeight: 2
+  crouchHeightScale: 0.5
+  gDrag: 2.5
+  aDrag: 1
   ground:
     serializedVersion: 2
     m_Bits: 1024
-  gDrag: 1.5
-  aDrag: 1
-  jumpHeight: 20
   orientation: {fileID: 579134700}
   canMove: 1
+  camera: {fileID: 1956642438}
   jumpKey: 32
+  crouchKey: 306
   sprintKey: 304
 --- !u!54 &1532190827
 Rigidbody:
@@ -5810,7 +5817,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1532190824}
   serializedVersion: 4
-  m_Mass: 2
+  m_Mass: 3
   m_Drag: 0
   m_AngularDrag: 0.05
   m_CenterOfMass: {x: 0, y: 0, z: 0}
@@ -5838,7 +5845,7 @@ Transform:
   m_GameObject: {fileID: 1532190824}
   m_LocalRotation: {x: -0, y: 0.38268346, z: -0, w: 0.92387956}
   m_LocalPosition: {x: -2, y: 1, z: -2}
-  m_LocalScale: {x: 0.75, y: 0.75, z: 0.75}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1458617176}
@@ -7097,7 +7104,7 @@ GameObject:
   - component: {fileID: 1786581722}
   - component: {fileID: 1786581723}
   m_Layer: 0
-  m_Name: Spot Light (1)
+  m_Name: Short Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -8153,6 +8160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   sensitivity: 350
   orientation: {fileID: 579134700}
+  player: {fileID: 1532190828}
   enabled: 1
 --- !u!114 &1956642440
 MonoBehaviour:
