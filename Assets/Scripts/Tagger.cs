@@ -316,7 +316,8 @@ public abstract class Tagger : MonoBehaviour
         
         moveDirection = Vector3.zero;
 
-        disableMove();
+        canMove = false;
+
         DisableComponents();
         // I would like this to be abstracted but for now this will do
         if (camera != null)
@@ -341,7 +342,7 @@ public abstract class Tagger : MonoBehaviour
         transform.position = nextAnimPosition;
         // Enable Movement and Components
         EnableComponents();
-        enableMove();
+        canMove = true;
     }
 
     public void beginSlide()
