@@ -278,7 +278,6 @@ public abstract class Tagger : MonoBehaviour
             Vector3 cameraLookDir = pos - camera.transform.position;
             cameraLookDir.y = 0.0f;
             Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
-            camera.transform.rotation = rotation;
             camera.rotationX = 0f;
             camera.rotationY = rotation.y > 0.5f ? -rotation.y + 0.5f : rotation.y;
             camera.rotationY *= 360;
@@ -307,7 +306,6 @@ public abstract class Tagger : MonoBehaviour
     {
         EnableComponents();
         enableMove();
-
         // Teleport the player to the expected position
         transform.position = nextAnimPosition;
         // Enable Movement and Components
@@ -315,9 +313,10 @@ public abstract class Tagger : MonoBehaviour
 
     public void beginVault(Vector3 pos)
     {
+        
         moveDirection = Vector3.zero;
 
-        canMove = false;
+        disableMove();
         DisableComponents();
         // I would like this to be abstracted but for now this will do
         if (camera != null)
@@ -325,7 +324,6 @@ public abstract class Tagger : MonoBehaviour
             Vector3 cameraLookDir = pos - camera.transform.position;
             cameraLookDir.y = 0.0f;
             Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
-            camera.transform.rotation = rotation;
             camera.rotationX = 0f;
             camera.rotationY = rotation.y > 0.5f ? -rotation.y + 0.5f : rotation.y;
             camera.rotationY *= 360;
@@ -342,8 +340,8 @@ public abstract class Tagger : MonoBehaviour
         // Teleport the player to the expected position
         transform.position = nextAnimPosition;
         // Enable Movement and Components
-        canMove = true;
         EnableComponents();
+        enableMove();
     }
 
     public void beginSlide()
