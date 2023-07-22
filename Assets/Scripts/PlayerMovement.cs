@@ -6,11 +6,12 @@ public class PlayerMovement : Tagger
     float inputH;
     float inputV;
 
-    [Header("KeyBinds")] public KeyCode jumpKey = KeyCode.Space;
+    [Header("KeyBinds")] 
+    public static KeyCode jumpKey = KeyCode.Space;
 
-    public KeyCode crouchKey = KeyCode.LeftControl;
+    public static KeyCode crouchKey = KeyCode.LeftControl;
 
-    public KeyCode sprintKey = KeyCode.LeftShift;
+    public static KeyCode sprintKey = KeyCode.LeftShift;
 
 
     // Start is called before the first frame update
