@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 
 public abstract class Tagger : MonoBehaviour
@@ -318,10 +319,10 @@ public abstract class Tagger : MonoBehaviour
             Vector3 cameraLookDir = pos - camera.transform.position;
             cameraLookDir.y = 0.0f;
             Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
-            camera.transform.rotation = rotation;
             camera.rotationX = 0f;
-            camera.rotationY = rotation.y > 0.5f ? -rotation.y + 0.5f : rotation.y;
+            camera.rotationY = Math.Abs(rotation.y) > 0.5f ? rotation.y + 0.5f : -rotation.y;
             camera.rotationY *= 360;
+            
             transform.rotation = rotation;
         }
 
