@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class PlayerMovement : Tagger
 {
@@ -6,8 +7,7 @@ public class PlayerMovement : Tagger
     float inputH;
     float inputV;
 
-    [Header("KeyBinds")] 
-    public static KeyCode jumpKey = KeyCode.Space;
+    [Header("KeyBinds")] public static KeyCode jumpKey = KeyCode.Space;
 
     public static KeyCode crouchKey = KeyCode.LeftControl;
 
@@ -61,14 +61,12 @@ public class PlayerMovement : Tagger
         if (Input.GetKeyDown(crouchKey))
         {
             isCrouching = true;
-            ChangeScale(crouchHeightScale);
-            rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         }
 
         if (Input.GetKeyUp(crouchKey))
         {
             isCrouching = false;
-            ChangeScale(playerHeightStartScale);
+            ChangeScale(playerHeightStartScale - 1, playerHeightStartScale, playerHeightStartScale - 1, 0f, 0f, 0f);
         }
 
 
