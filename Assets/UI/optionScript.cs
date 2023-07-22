@@ -2,15 +2,18 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UIElements;
 using UnityEngine.UI;
+using Toggle = UnityEngine.UIElements.Toggle;
 
 public class optionScript : MonoBehaviour
 {
     private keyBinds currentKeyState;
     private KeyCode lastPressed;
     private bool waiting = false;
+    private bool isFullScreen = false;
 
     enum keyBinds
     {
@@ -68,5 +71,12 @@ public class optionScript : MonoBehaviour
         }
 
         waiting = false;
+    }
+
+    public void SetFullscreen()
+    {
+        isFullScreen = !isFullScreen;
+        Screen.fullScreen = isFullScreen;
+        print("Full Screen mode" + isFullScreen.ToString());
     }
 }
