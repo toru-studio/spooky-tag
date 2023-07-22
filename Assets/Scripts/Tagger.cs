@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 public abstract class Tagger : MonoBehaviour
 {
@@ -40,6 +41,7 @@ public abstract class Tagger : MonoBehaviour
     public bool canMove = true;
     public CameraController camera;
 
+    public BoxCollider boxCollider;
     protected Rigidbody rigidbody;
     protected Animator animator;
     private Vector3 nextAnimPosition;
@@ -62,7 +64,7 @@ public abstract class Tagger : MonoBehaviour
         animator = GetComponentInChildren<CharacterCollection>().GetComponent<Animator>();
         moveDirection = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
-        playerHeightStartScale = transform.localScale.y;
+        playerHeightStartScale = boxCollider.size.y;
         resetJump();
     }
 
@@ -84,6 +86,7 @@ public abstract class Tagger : MonoBehaviour
             {
                 animator.SetBool("isJump", !canJump);
             }
+
             if (rigidbody.velocity.magnitude > 0.2 && isOnGround)
             {
                 animator.SetBool("isMoving", true);
@@ -92,13 +95,16 @@ public abstract class Tagger : MonoBehaviour
             {
                 animator.SetBool("isMoving", false);
             }
+
             if (isSliding)
             {
                 currentState = MoveState.inSlide;
             }
-            else if (isCrouching)
+            else if (isCrouching && isOnGround)
             {
                 currentState = MoveState.inCrouch;
+                ChangeScale(playerHeightStartScale - 1, crouchHeightScale, playerHeightStartScale - 1, 0f, 0f, 0f);
+                rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
                 moveSpeed = crouchSpeed;
             }
             else if (isOnGround && isSprinting)
@@ -122,7 +128,7 @@ public abstract class Tagger : MonoBehaviour
                 currentState = MoveState.inAir;
                 inAir = true;
             }
-            
+
             // Set animators
             animator.SetBool("isSliding", isSliding);
             animator.SetBool("inAir", inAir);
@@ -163,9 +169,11 @@ public abstract class Tagger : MonoBehaviour
         }
     }
 
-    protected void ChangeScale(float scale)
+
+    protected void ChangeScale(float sizeX, float sizeY, float sizeZ, float centerX, float centerY, float centerZ)
     {
-        transform.localScale = new Vector3(transform.localScale.x, scale, transform.localScale.z);
+        boxCollider.size = new Vector3(sizeX, sizeY, sizeZ);
+        boxCollider.center = new Vector3(centerX, centerY, centerZ);
     }
 
     protected void Jump()
@@ -176,7 +184,7 @@ public abstract class Tagger : MonoBehaviour
             rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
             rigidbody.AddForce(transform.up * jumpHeight, ForceMode.Impulse);
             animator.SetTrigger("jump");
-            Invoke(nameof(resetJump),jumpLimit);
+            Invoke(nameof(resetJump), jumpLimit);
         }
     }
 
@@ -223,14 +231,13 @@ public abstract class Tagger : MonoBehaviour
     protected void stopSlide()
     {
         isSliding = false;
-        ChangeScale(playerHeightStartScale);
     }
 
     protected void startSlide()
     {
         isSliding = true;
         rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-        ChangeScale(crouchHeightScale);
+        ChangeScale(playerHeightStartScale - 1, crouchHeightScale, playerHeightStartScale, 0f, 0F, 1F);
         slideTimer = maxSlideTime;
     }
 
