@@ -22,7 +22,8 @@ public class optionScript : MonoBehaviour
 
     void OnGUI()
     {
-        if (waiting){
+        if (waiting)
+        {
             Event e = Event.current;
             if (e.isKey)
             {
@@ -54,14 +55,18 @@ public class optionScript : MonoBehaviour
         {
             case keyBinds.jump:
                 PlayerMovement.jumpKey = key;
+                GameObject.Find("Jump Keybind").GetComponentInChildren<TextMeshProUGUI>().text = key.ToString();
                 break;
             case keyBinds.sprint:
+                GameObject.Find("Sprint Keybind").GetComponentInChildren<TextMeshProUGUI>().text = key.ToString();
                 PlayerMovement.sprintKey = key;
                 break;
             case keyBinds.crouch:
+                GameObject.Find("Crouch Keybind").GetComponentInChildren<TextMeshProUGUI>().text = key.ToString();
                 PlayerMovement.crouchKey = key;
                 break;
         }
+
         waiting = false;
     }
 }
