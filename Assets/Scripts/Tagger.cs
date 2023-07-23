@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public abstract class Tagger : MonoBehaviour
@@ -11,6 +12,7 @@ public abstract class Tagger : MonoBehaviour
     protected bool isOnGround;
     protected bool isCrouching;
     protected bool isSliding;
+    protected bool isIT;
 
     [Header("Speeds")] private float moveSpeed;
     public float walkSpeed;
@@ -348,6 +350,16 @@ public abstract class Tagger : MonoBehaviour
 
     public void beginSlide()
     {
+    }
+
+//TODO set the loadScene to the end screen
+//This can be used later for a tag system between player and enemy but not needed right now
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.name == "Enemy")
+        {
+            SceneManager.LoadScene("Nathans spooky arena");
+        }
     }
 
     // Disables any components

@@ -8,7 +8,7 @@ public class MainMenu : MonoBehaviour
     public SceneManager SceneManager;
     public void playButton()
     {
-        SceneManager.LoadScene("Finlay's Scene");
+        SceneManager.LoadScene("Nathans spooky arena");
     }
 
     public void quitGame()

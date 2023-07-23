@@ -25,6 +25,7 @@ public class PlayerMovement : Tagger
     {
         base.Update();
         Inputs();
+        
     }
 
 
