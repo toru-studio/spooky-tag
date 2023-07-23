@@ -6,7 +6,7 @@ public abstract class Tagger : MonoBehaviour
 {
     private Vector3 moveDirection;
 
-    [Header("States")] public static MoveState currentState;
+    [Header("States")] public MoveState currentState;
     protected bool isSprinting;
     protected bool isOnGround;
     protected bool isCrouching;
@@ -44,6 +44,7 @@ public abstract class Tagger : MonoBehaviour
     protected Animator animator;
     private Vector3 nextAnimPosition;
     public float groundDist;
+    public float walkAnimationTarget;
     
     [Header("Transforms")]
     public Transform orientation;
@@ -91,7 +92,7 @@ public abstract class Tagger : MonoBehaviour
                 animator.SetBool("isJump", !canJump);
             }
 
-            if (rigidbody.velocity.magnitude > 0.2 && (isOnGround || onSlope()))
+            if (rigidbody.velocity.magnitude > walkAnimationTarget && (isOnGround || onSlope()))
             {
                 animator.SetBool("isMoving", true);
             }
