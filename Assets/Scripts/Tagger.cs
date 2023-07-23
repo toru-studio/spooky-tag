@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -326,8 +327,9 @@ public abstract class Tagger : MonoBehaviour
             cameraLookDir.y = 0.0f;
             Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
             camera.rotationX = 0f;
-            camera.rotationY = rotation.y > 0.5f ? -rotation.y + 0.5f : rotation.y;
+            camera.rotationY = Math.Abs(rotation.y) > 0.5f ? rotation.y + 0.5f : -rotation.y;
             camera.rotationY *= 360;
+            
             transform.rotation = rotation;
         }
 
