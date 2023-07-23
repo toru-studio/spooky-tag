@@ -66,7 +66,7 @@ public class PlayerMovement : Tagger
         if (Input.GetKeyUp(crouchKey))
         {
             isCrouching = false;
-            ChangeScale(playerHeightStartScale - 1, playerHeightStartScale, playerHeightStartScale - 1, 0f, 0f, 0f);
+            ChangeScale(playerHeightStartScale - 1, playerHeightStartScale, playerHeightStartScale - 1, 0f, 0f, 0f, 1);
         }
 
 
