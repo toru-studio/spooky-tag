@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public abstract class Tagger : MonoBehaviour
@@ -44,11 +47,11 @@ public abstract class Tagger : MonoBehaviour
     protected Animator animator;
     private Vector3 nextAnimPosition;
     public float groundDist;
-    
-    [Header("Transforms")]
-    public Transform orientation;
+
+
+    [Header("Transforms")] public Transform orientation;
     public Transform groundCheck;
-    
+
 
     public enum MoveState
     {
@@ -110,7 +113,7 @@ public abstract class Tagger : MonoBehaviour
                 ChangeScale(playerHeightStartScale - 1, crouchHeightScale, playerHeightStartScale - 1, 0f, 0f, 0f, 1);
                 moveSpeed = crouchSpeed;
             }
-            else if ((isOnGround|| onSlope()) && isSprinting)
+            else if ((isOnGround || onSlope()) && isSprinting)
             {
                 isRunning = true;
                 currentState = MoveState.inSprint;
@@ -168,7 +171,8 @@ public abstract class Tagger : MonoBehaviour
     }
 
 
-    protected void ChangeScale(float sizeX, float sizeY, float sizeZ, float centerX, float centerY, float centerZ, int direction)
+    protected void ChangeScale(float sizeX, float sizeY, float sizeZ, float centerX, float centerY, float centerZ,
+        int direction)
     {
         capsuleCollider.height = sizeY;
         capsuleCollider.center = new Vector3(centerX, centerY, centerZ);
@@ -236,7 +240,7 @@ public abstract class Tagger : MonoBehaviour
     {
         isSliding = true;
         rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-        ChangeScale(playerHeightStartScale - 1, playerHeightStartScale -1, playerHeightStartScale, 0f, 0F, 1F, 2);
+        ChangeScale(playerHeightStartScale - 1, playerHeightStartScale - 1, playerHeightStartScale, 0f, 0F, 1F, 2);
         slideTimer = maxSlideTime;
     }
 
@@ -313,7 +317,6 @@ public abstract class Tagger : MonoBehaviour
 
     public void beginVault(Vector3 pos)
     {
-        
         moveDirection = Vector3.zero;
 
         canMove = false;
@@ -328,7 +331,7 @@ public abstract class Tagger : MonoBehaviour
             camera.rotationX = 0f;
             camera.rotationY = Math.Abs(rotation.y) > 0.5f ? rotation.y + 0.5f : -rotation.y;
             camera.rotationY *= 360;
-            
+
             transform.rotation = rotation;
         }
 
@@ -348,6 +351,27 @@ public abstract class Tagger : MonoBehaviour
 
     public void beginSlide()
     {
+    }
+
+
+    //TODO set the loadScene to the end screen
+    //This can be used later for a tag system between player and enemy but not needed right now
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.name == "Enemy")
+        {
+            string currentScene = SceneManager.GetActiveScene().name;
+            var num = currentScene.Last();
+            var nextNum = char.GetNumericValue(num) + 1;
+            if (nextNum == 2)
+            {
+                SceneManager.LoadScene("Start Screen");
+            }
+            else
+            {
+                 SceneManager.LoadScene("Level " + nextNum);
+            }
+        }
     }
 
     // Disables any components
