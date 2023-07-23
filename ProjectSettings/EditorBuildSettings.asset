@@ -4,5 +4,14 @@
 EditorBuildSettings:
   m_ObjectHideFlags: 0
   serializedVersion: 2
-  m_Scenes: []
+  m_Scenes:
+  - enabled: 1
+    path: Assets/UI/Scenes/Start Screen.unity
+    guid: 318dede69b11dea44baea2d6cc187c6b
+  - enabled: 1
+    path: Assets/Scenes/Nathan Scene.unity
+    guid: 34ef167bb78d8364986bfa60c191af98
+  - enabled: 1
+    path: Assets/Scenes/Finlay's Scene.unity
+    guid: 5413f851b8451a843b554b31fd5ad170
   m_configObjects: {}

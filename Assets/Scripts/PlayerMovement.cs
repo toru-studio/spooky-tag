@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Animations;
 
 public class PlayerMovement : Tagger
 {
@@ -6,11 +7,11 @@ public class PlayerMovement : Tagger
     float inputH;
     float inputV;
 
-    [Header("KeyBinds")] public KeyCode jumpKey = KeyCode.Space;
+    [Header("KeyBinds")] public static KeyCode jumpKey = KeyCode.Space;
 
-    public KeyCode crouchKey = KeyCode.LeftControl;
+    public static KeyCode crouchKey = KeyCode.LeftControl;
 
-    public KeyCode sprintKey = KeyCode.LeftShift;
+    public static KeyCode sprintKey = KeyCode.LeftShift;
 
 
     // Start is called before the first frame update
@@ -40,7 +41,7 @@ public class PlayerMovement : Tagger
     {
         inputH = Input.GetAxisRaw("Horizontal");
         inputV = Input.GetAxisRaw("Vertical");
-        if (Input.GetKey(jumpKey) && isOnGround)
+        if (Input.GetKey(jumpKey))
         {
             Jump();
         }
@@ -60,14 +61,12 @@ public class PlayerMovement : Tagger
         if (Input.GetKeyDown(crouchKey))
         {
             isCrouching = true;
-            ChangeScale(crouchHeightScale);
-            rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
         }
 
         if (Input.GetKeyUp(crouchKey))
         {
             isCrouching = false;
-            ChangeScale(playerHeightStartScale);
+            ChangeScale(playerHeightStartScale - 1, playerHeightStartScale, playerHeightStartScale - 1, 0f, 0f, 0f);
         }
 
 
