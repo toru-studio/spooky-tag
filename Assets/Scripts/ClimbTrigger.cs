@@ -22,7 +22,7 @@ public class ClimbTrigger : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         // Get taggers interacting with the trigger
-        Tagger[] taggers = other.gameObject.GetComponents<Tagger>();
+        Tagger[] taggers = other.GetComponentsInParent<Tagger>();
         // Get the taggers position relative to the trigger
         Vector3 dir = other.transform.position - parentObject.transform.position;
 

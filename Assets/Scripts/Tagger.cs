@@ -29,7 +29,6 @@ public abstract class Tagger : MonoBehaviour
     public float jumpHeight;
     public float jumpLimit;
 
-
     [Header("Heights")] public float playerHeight;
     protected float playerHeightStartScale;
     public float crouchHeightScale;
@@ -38,14 +37,18 @@ public abstract class Tagger : MonoBehaviour
     public float aDrag;
 
     [Header("Misc")] public LayerMask ground;
-    public Transform orientation;
     public bool canMove = true;
     public CameraController camera;
-
-    public BoxCollider boxCollider;
+    public CapsuleCollider capsuleCollider;
     protected Rigidbody rigidbody;
     protected Animator animator;
     private Vector3 nextAnimPosition;
+    public float groundDist;
+    
+    [Header("Transforms")]
+    public Transform orientation;
+    public Transform groundCheck;
+    
 
     public enum MoveState
     {
@@ -65,13 +68,13 @@ public abstract class Tagger : MonoBehaviour
         animator = GetComponentInChildren<CharacterCollection>().GetComponent<Animator>();
         moveDirection = Vector3.zero;
         rigidbody = GetComponent<Rigidbody>();
-        playerHeightStartScale = boxCollider.size.y;
+        playerHeightStartScale = capsuleCollider.height;
         resetJump();
     }
 
     protected void Update()
     {
-        isOnGround = Physics.Raycast(transform.position, Vector3.down, playerHeight * 0.5f + 0.2f, ground);
+        isOnGround = Physics.CheckSphere(groundCheck.position, groundDist, ground);
         rigidbody.drag = isOnGround ? gDrag : aDrag;
         changeState();
     }
@@ -104,8 +107,7 @@ public abstract class Tagger : MonoBehaviour
             else if (isCrouching && isOnGround)
             {
                 currentState = MoveState.inCrouch;
-                ChangeScale(playerHeightStartScale - 1, crouchHeightScale, playerHeightStartScale - 1, 0f, 0f, 0f);
-                rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
+                ChangeScale(playerHeightStartScale - 1, crouchHeightScale, playerHeightStartScale - 1, 0f, 0f, 0f, 1);
                 moveSpeed = crouchSpeed;
             }
             else if (isOnGround && isSprinting)
@@ -153,7 +155,7 @@ public abstract class Tagger : MonoBehaviour
                 rigidbody.AddForce(getSlopeMove() * (moveSpeed * 20f), ForceMode.Force);
                 if (rigidbody.velocity.y > 0)
                 {
-                    rigidbody.AddForce(Vector3.down * 80f, ForceMode.Force);
+                    rigidbody.AddForce(Vector3.down * 40f, ForceMode.Force);
                 }
             }
             else
@@ -171,15 +173,16 @@ public abstract class Tagger : MonoBehaviour
     }
 
 
-    protected void ChangeScale(float sizeX, float sizeY, float sizeZ, float centerX, float centerY, float centerZ)
+    protected void ChangeScale(float sizeX, float sizeY, float sizeZ, float centerX, float centerY, float centerZ, int direction)
     {
-        boxCollider.size = new Vector3(sizeX, sizeY, sizeZ);
-        boxCollider.center = new Vector3(centerX, centerY, centerZ);
+        capsuleCollider.height = sizeY;
+        capsuleCollider.center = new Vector3(centerX, centerY, centerZ);
+        capsuleCollider.direction = direction;
     }
 
     protected void Jump()
     {
-        if (isOnGround && canJump)
+        if (isOnGround && canJump && canMove)
         {
             canJump = false;
             rigidbody.velocity = new Vector3(rigidbody.velocity.x, 0f, rigidbody.velocity.z);
@@ -238,7 +241,7 @@ public abstract class Tagger : MonoBehaviour
     {
         isSliding = true;
         rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-        ChangeScale(playerHeightStartScale - 1, crouchHeightScale, playerHeightStartScale, 0f, 0F, 1F);
+        ChangeScale(playerHeightStartScale - 1, playerHeightStartScale -1, playerHeightStartScale, 0f, 0F, 1F, 2);
         slideTimer = maxSlideTime;
     }
 
@@ -305,6 +308,7 @@ public abstract class Tagger : MonoBehaviour
 
     public void endClimb()
     {
+        print("ended Climb");
         EnableComponents();
         enableMove();
         // Teleport the player to the expected position
