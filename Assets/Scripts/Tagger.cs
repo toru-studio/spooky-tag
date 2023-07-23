@@ -6,7 +6,7 @@ public abstract class Tagger : MonoBehaviour
 {
     private Vector3 moveDirection;
 
-    [Header("States")] public MoveState currentState;
+    [Header("States")] public static MoveState currentState;
     protected bool isSprinting;
     protected bool isOnGround;
     protected bool isCrouching;
@@ -91,7 +91,7 @@ public abstract class Tagger : MonoBehaviour
                 animator.SetBool("isJump", !canJump);
             }
 
-            if (rigidbody.velocity.magnitude > 0.2 && isOnGround)
+            if (rigidbody.velocity.magnitude > 0.2 && (isOnGround || onSlope()))
             {
                 animator.SetBool("isMoving", true);
             }
@@ -110,21 +110,16 @@ public abstract class Tagger : MonoBehaviour
                 ChangeScale(playerHeightStartScale - 1, crouchHeightScale, playerHeightStartScale - 1, 0f, 0f, 0f, 1);
                 moveSpeed = crouchSpeed;
             }
-            else if (isOnGround && isSprinting)
+            else if ((isOnGround|| onSlope()) && isSprinting)
             {
                 isRunning = true;
                 currentState = MoveState.inSprint;
                 moveSpeed = sprintSpeed;
             }
-            else if (isOnGround)
+            else if (isOnGround || onSlope())
             {
                 currentState = MoveState.inWalk;
                 moveSpeed = walkSpeed;
-            }
-            // Look into this, it may be obsolete
-            else if (onSlope())
-            {
-                currentState = MoveState.onSlope;
             }
             else
             {
