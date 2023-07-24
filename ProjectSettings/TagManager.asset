@@ -14,9 +14,9 @@ TagManager:
   - NoLightBounce
   - 
   - 
-  - 
+  - Outside
   - isGround
-  - isWall
+  - Player
   - 
   - 
   - 

@@ -50,6 +50,7 @@ public abstract class Tagger : MonoBehaviour
 
 
     [Header("Transforms")] public Transform orientation;
+    public float walkAnimationTarget;
     public Transform groundCheck;
 
 
@@ -94,7 +95,7 @@ public abstract class Tagger : MonoBehaviour
                 animator.SetBool("isJump", !canJump);
             }
 
-            if (rigidbody.velocity.magnitude > 0.2 && (isOnGround || onSlope()))
+            if (rigidbody.velocity.magnitude > walkAnimationTarget && (isOnGround || onSlope()))
             {
                 animator.SetBool("isMoving", true);
             }
@@ -276,17 +277,18 @@ public abstract class Tagger : MonoBehaviour
         Vector3 curPos = transform.position;
         transform.position = new Vector3(curPos.x, pos.y - 1.8f, curPos.z);
 
+        Vector3 cameraLookDir = pos - camera.transform.position;
+        cameraLookDir.y = 0.0f;
+        
+        Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
         if (camera != null)
         {
-            Vector3 cameraLookDir = pos - camera.transform.position;
-            cameraLookDir.y = 0.0f;
-            Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
             camera.rotationX = 0f;
             camera.rotationY = rotation.y > 0.5f ? -rotation.y + 0.5f : rotation.y;
             camera.rotationY *= 360;
-            transform.rotation = rotation;
         }
-
+        
+        transform.rotation = rotation;
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
         // Save the target position
@@ -317,24 +319,35 @@ public abstract class Tagger : MonoBehaviour
 
     public void beginVault(Vector3 pos)
     {
+        
         moveDirection = Vector3.zero;
 
         canMove = false;
 
         DisableComponents();
         // I would like this to be abstracted but for now this will do
+
+        Vector3 cameraLookDir;
+        Quaternion rotation;
+        
         if (camera != null)
         {
-            Vector3 cameraLookDir = pos - camera.transform.position;
+            cameraLookDir = pos - camera.transform.position;
             cameraLookDir.y = 0.0f;
-            Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
+            rotation = Quaternion.LookRotation(cameraLookDir);
             camera.rotationX = 0f;
             camera.rotationY = Math.Abs(rotation.y) > 0.5f ? rotation.y + 0.5f : -rotation.y;
             camera.rotationY *= 360;
-
-            transform.rotation = rotation;
+            
+        }
+        else
+        {
+            cameraLookDir = pos - transform.position;
+            cameraLookDir.y = 0.0f;
+            rotation = Quaternion.LookRotation(cameraLookDir);
         }
 
+        transform.rotation = rotation;
         animator.SetTrigger("vault");
 
         nextAnimPosition = pos;
