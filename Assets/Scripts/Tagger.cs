@@ -374,7 +374,7 @@ public abstract class Tagger : MonoBehaviour
             string currentScene = SceneManager.GetActiveScene().name;
             var num = currentScene.Last();
             var nextNum = char.GetNumericValue(num) + 1;
-            if (nextNum == 2)
+            if (nextNum == 3)
             {
                 SceneManager.LoadScene("Start Screen");
             }
