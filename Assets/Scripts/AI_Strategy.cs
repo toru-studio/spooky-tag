@@ -16,6 +16,7 @@ public class AI_Strategy : Tagger
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         canRotate = true;
+        isSprinting = true;
     }
 
     void Update()

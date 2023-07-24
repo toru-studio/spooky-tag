@@ -275,19 +275,19 @@ public abstract class Tagger : MonoBehaviour
 
         // Teleports player to beginning of climb position
         Vector3 curPos = transform.position;
-        transform.position = new Vector3(curPos.x, pos.y - 1.8f, curPos.z);
+        transform.position = new Vector3(curPos.x, pos.y - 1f, curPos.z);
 
         Vector3 cameraLookDir = pos - camera.transform.position;
         cameraLookDir.y = 0.0f;
-        
-        Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
+
+        Quaternion rotation = Quaternion.LookRotation(-cameraLookDir);
         if (camera != null)
         {
             camera.rotationX = 0f;
             camera.rotationY = rotation.y > 0.5f ? -rotation.y + 0.5f : rotation.y;
             camera.rotationY *= 360;
         }
-        
+
         transform.rotation = rotation;
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
@@ -319,7 +319,6 @@ public abstract class Tagger : MonoBehaviour
 
     public void beginVault(Vector3 pos)
     {
-        
         moveDirection = Vector3.zero;
 
         canMove = false;
@@ -329,7 +328,7 @@ public abstract class Tagger : MonoBehaviour
 
         Vector3 cameraLookDir;
         Quaternion rotation;
-        
+
         if (camera != null)
         {
             cameraLookDir = pos - camera.transform.position;
@@ -338,7 +337,6 @@ public abstract class Tagger : MonoBehaviour
             camera.rotationX = 0f;
             camera.rotationY = Math.Abs(rotation.y) > 0.5f ? rotation.y + 0.5f : -rotation.y;
             camera.rotationY *= 360;
-            
         }
         else
         {
@@ -371,18 +369,18 @@ public abstract class Tagger : MonoBehaviour
     //This can be used later for a tag system between player and enemy but not needed right now
     private void OnCollisionEnter(Collision other)
     {
-        if (other.gameObject.name == "Enemy")
+        if (other.gameObject.name is "Enemy" or "outsideGround")
         {
             string currentScene = SceneManager.GetActiveScene().name;
             var num = currentScene.Last();
             var nextNum = char.GetNumericValue(num) + 1;
-            if (nextNum == 2)
+            if (nextNum == 3)
             {
                 SceneManager.LoadScene("Start Screen");
             }
             else
             {
-                 SceneManager.LoadScene("Level " + nextNum);
+                SceneManager.LoadScene("Level " + nextNum);
             }
         }
     }
