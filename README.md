@@ -1,5 +1,6 @@
 # TAG XTREME: PRO-RUSH EDITION
-Game Jam submission for [SCREAM DUNK](https://itch.io/jam/scream-dunk) 2023
+Game Jam submission for [SCREAM DUNK](https://itch.io/jam/scream-dunk) 2023.
+
 V1 can be found _(and run in-browser)_ [here](https://sammata.itch.io/tag-xtreme-pro-rush-edition)
 
 ## Concept
