@@ -7,7 +7,7 @@ using UnityEngine.AI;
 public class AI_Strategy : Tagger
 {
     public Transform player;
-    private NavMeshAgent agent;
+    public NavMeshAgent agent;
     private bool canRotate;
 
     void Start()
@@ -16,6 +16,7 @@ public class AI_Strategy : Tagger
         agent = GetComponent<NavMeshAgent>();
         agent.updateRotation = false;
         canRotate = true;
+        isSprinting = true;
     }
 
     void Update()
