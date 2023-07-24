@@ -16,7 +16,7 @@ TagManager:
   - 
   - Outside
   - isGround
-  - isWall
+  - Player
   - 
   - 
   - 

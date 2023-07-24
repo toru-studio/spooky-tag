@@ -1,5 +1,8 @@
 using System;
+using System.Linq;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using UnityEngine.UIElements;
 
 public abstract class Tagger : MonoBehaviour
@@ -44,11 +47,12 @@ public abstract class Tagger : MonoBehaviour
     protected Animator animator;
     private Vector3 nextAnimPosition;
     public float groundDist;
-    
-    [Header("Transforms")]
-    public Transform orientation;
+
+
+    [Header("Transforms")] public Transform orientation;
+    public float walkAnimationTarget;
     public Transform groundCheck;
-    
+
 
     public enum MoveState
     {
@@ -91,7 +95,7 @@ public abstract class Tagger : MonoBehaviour
                 animator.SetBool("isJump", !canJump);
             }
 
-            if (rigidbody.velocity.magnitude > 0.2 && (isOnGround || onSlope()))
+            if (rigidbody.velocity.magnitude > walkAnimationTarget && (isOnGround || onSlope()))
             {
                 animator.SetBool("isMoving", true);
             }
@@ -110,7 +114,7 @@ public abstract class Tagger : MonoBehaviour
                 ChangeScale(playerHeightStartScale - 1, crouchHeightScale, playerHeightStartScale - 1, 0f, 0f, 0f, 1);
                 moveSpeed = crouchSpeed;
             }
-            else if ((isOnGround|| onSlope()) && isSprinting)
+            else if ((isOnGround || onSlope()) && isSprinting)
             {
                 isRunning = true;
                 currentState = MoveState.inSprint;
@@ -168,7 +172,8 @@ public abstract class Tagger : MonoBehaviour
     }
 
 
-    protected void ChangeScale(float sizeX, float sizeY, float sizeZ, float centerX, float centerY, float centerZ, int direction)
+    protected void ChangeScale(float sizeX, float sizeY, float sizeZ, float centerX, float centerY, float centerZ,
+        int direction)
     {
         capsuleCollider.height = sizeY;
         capsuleCollider.center = new Vector3(centerX, centerY, centerZ);
@@ -236,7 +241,7 @@ public abstract class Tagger : MonoBehaviour
     {
         isSliding = true;
         rigidbody.AddForce(Vector3.down * 5f, ForceMode.Impulse);
-        ChangeScale(playerHeightStartScale - 1, playerHeightStartScale -1, playerHeightStartScale, 0f, 0F, 1F, 2);
+        ChangeScale(playerHeightStartScale - 1, playerHeightStartScale - 1, playerHeightStartScale, 0f, 0F, 1F, 2);
         slideTimer = maxSlideTime;
     }
 
@@ -272,17 +277,18 @@ public abstract class Tagger : MonoBehaviour
         Vector3 curPos = transform.position;
         transform.position = new Vector3(curPos.x, pos.y - 1.8f, curPos.z);
 
+        Vector3 cameraLookDir = pos - camera.transform.position;
+        cameraLookDir.y = 0.0f;
+        
+        Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
         if (camera != null)
         {
-            Vector3 cameraLookDir = pos - camera.transform.position;
-            cameraLookDir.y = 0.0f;
-            Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
             camera.rotationX = 0f;
             camera.rotationY = rotation.y > 0.5f ? -rotation.y + 0.5f : rotation.y;
             camera.rotationY *= 360;
-            transform.rotation = rotation;
         }
-
+        
+        transform.rotation = rotation;
         // Trigger the animation and set current state
         animator.SetTrigger("climb");
         // Save the target position
@@ -320,18 +326,28 @@ public abstract class Tagger : MonoBehaviour
 
         DisableComponents();
         // I would like this to be abstracted but for now this will do
+
+        Vector3 cameraLookDir;
+        Quaternion rotation;
+        
         if (camera != null)
         {
-            Vector3 cameraLookDir = pos - camera.transform.position;
+            cameraLookDir = pos - camera.transform.position;
             cameraLookDir.y = 0.0f;
-            Quaternion rotation = Quaternion.LookRotation(cameraLookDir);
+            rotation = Quaternion.LookRotation(cameraLookDir);
             camera.rotationX = 0f;
             camera.rotationY = Math.Abs(rotation.y) > 0.5f ? rotation.y + 0.5f : -rotation.y;
             camera.rotationY *= 360;
             
-            transform.rotation = rotation;
+        }
+        else
+        {
+            cameraLookDir = pos - transform.position;
+            cameraLookDir.y = 0.0f;
+            rotation = Quaternion.LookRotation(cameraLookDir);
         }
 
+        transform.rotation = rotation;
         animator.SetTrigger("vault");
 
         nextAnimPosition = pos;
@@ -348,6 +364,27 @@ public abstract class Tagger : MonoBehaviour
 
     public void beginSlide()
     {
+    }
+
+
+    //TODO set the loadScene to the end screen
+    //This can be used later for a tag system between player and enemy but not needed right now
+    private void OnCollisionEnter(Collision other)
+    {
+        if (other.gameObject.name == "Enemy")
+        {
+            string currentScene = SceneManager.GetActiveScene().name;
+            var num = currentScene.Last();
+            var nextNum = char.GetNumericValue(num) + 1;
+            if (nextNum == 2)
+            {
+                SceneManager.LoadScene("Start Screen");
+            }
+            else
+            {
+                 SceneManager.LoadScene("Level " + nextNum);
+            }
+        }
     }
 
     // Disables any components
