@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class CharacterCollection : MonoBehaviour
 {
+    public AudioSource step;
     // Start is called before the first frame update
     void Start()
     {
@@ -24,6 +25,11 @@ public class CharacterCollection : MonoBehaviour
     public void endVault()
     {
         GetComponentInParent<Tagger>().endVault();
+    }
+
+    public void playStep()
+    {
+        step.Play();
     }
 
 }
