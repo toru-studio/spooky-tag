@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Audio;
 using UnityEngine.UIElements;
 using UnityEngine.UI;
 using Toggle = UnityEngine.UIElements.Toggle;
@@ -14,6 +15,8 @@ public class optionScript : MonoBehaviour
     private KeyCode lastPressed;
     private bool waiting = false;
     private bool isFullScreen = false;
+
+    public AudioMixer audioMixer;
 
     enum keyBinds
     {
@@ -41,7 +44,12 @@ public class optionScript : MonoBehaviour
 
     public void setVolume(float vol)
     {
-        print("Volume: " + vol);
+        audioMixer.SetFloat("volume", vol);
+    }
+
+    public void setQuality(int qualityIndex)
+    {
+        QualitySettings.SetQualityLevel(qualityIndex);
     }
 
     public void changeKeyState(string text)
