@@ -8,7 +8,7 @@ public class MainMenu : MonoBehaviour
     public SceneManager SceneManager;
     public void playButton()
     {
-        SceneManager.LoadScene("Finlay's Scene");
+        SceneManager.LoadScene("Level 1");
     }
 
     public void quitGame()
