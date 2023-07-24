@@ -44,7 +44,6 @@ public class VaultTrigger : MonoBehaviour
             }
             else if (parentObject.transform.localScale.y <= parentObject.transform.localScale.x)
             {
-                print("test");
                 float zOffset = (scale + other.transform.localScale.x) * Mathf.Sign(dotForward);
                 pos = other.transform.position;
                 pos.z -= zOffset;
