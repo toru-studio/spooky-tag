@@ -1,8 +1,9 @@
 # spooky-tag
 Game Jam for SCREAM DUNK! 2023 https://itch.io/jam/scream-dunk
+Submission can be found _(and run in-browser)_ [here](https://sammata.itch.io/tag-xtreme-pro-rush-edition)
 
 ## Concept
-**Spooky-Tag!** is a horror-tag game designed to look and feel like an old PS1 game.
+**TAG XTREME: PRO-RUSH EDITION** is a horror-tag game designed to look and feel like an old PS1 game.
 
 ##  Authors
 - Finlay Metcalfe
