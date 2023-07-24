@@ -21,7 +21,11 @@ public class optionScript : MonoBehaviour
         crouch,
         sprint
     }
-
+    private void Start()
+    {
+        Time.timeScale = 1;
+ 
+    }
 
     void OnGUI()
     {
