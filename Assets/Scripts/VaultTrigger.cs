@@ -36,18 +36,22 @@ public class VaultTrigger : MonoBehaviour
             
             Vector3 pos;
             
-            if (Math.Abs(dotRight) > Math.Abs(dotForward))
+            if (Math.Abs(dotRight) > Math.Abs(dotForward) && parentObject.transform.localScale.x <= parentObject.transform.localScale.y)
             {
                 float xOffset = (scale + other.transform.localScale.x) * Mathf.Sign(dotRight);
                 pos = other.transform.position;
                 pos.x -= xOffset;
             }
-            else
+            else if (parentObject.transform.localScale.y <= parentObject.transform.localScale.x)
             {
                 print("test");
                 float zOffset = (scale + other.transform.localScale.x) * Mathf.Sign(dotForward);
                 pos = other.transform.position;
                 pos.z -= zOffset;
+            }
+            else
+            {
+                return;
             }
             
 
