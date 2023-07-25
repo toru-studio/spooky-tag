@@ -9,7 +9,7 @@ public class MenuStart : MonoBehaviour
 {
     public AudioSource start;
     public AudioSource music;
-    public GameObject cover;
+    public Canvas cover;
     public GameObject Text;
     private bool starting;
     void Start()
@@ -36,6 +36,6 @@ public class MenuStart : MonoBehaviour
 
         music.Play();
 
-        cover.transform.position = new Vector3(0, 0, -10000);
+        cover.sortingOrder = -1;
     }
 }
